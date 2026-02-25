@@ -1,0 +1,731 @@
+html
+
+
+
+
+
+Avaliação de Auto-Estima Saudável - Instituto Impulso Coaching de Liderança
+
+
+
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--primary:#1a0533;--secondary:#2d1b69;--accent:#4a2080;--gold:#f0c040;--gold2:#ffd700;--glass:rgba(255,255,255,0.08);--glass2:rgba(255,255,255,0.15);--text:#fff;--shadow:0 8px 32px rgba(0,0,0,0.4)}
+body{font-family:'Inter',sans-serif;background:linear-gradient(135deg,#1a0533 0%,#2d1b69 50%,#4a2080 100%);background-attachment:fixed;color:var(--text);min-height:100vh;padding:20px}
+
+/* TELA */
+.screen{display:none;max-width:820px;margin:0 auto;animation:fadeInUp .5s ease}<br/>
+.screen.active{display:block}<br/>
+@keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+
+/* CARD */
+.card{background:var(--glass);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:35px;box-shadow:var(--shadow);margin-bottom:20px}
+
+/* HEADER */
+.header{text-align:center;padding:40px 30px 30px}<br/>
+.star-logo{font-size:60px;display:block;margin-bottom:15px;filter:drop-shadow(0 0 20px #f0c040)}<br/>
+.institute-name{font-family:'Poppins',sans-serif;font-size:14px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.7);margin-bottom:12px}<br/>
+.main-title{font-family:'Poppins',sans-serif;font-size:2.4rem;font-weight:800;background:linear-gradient(135deg,#f0c040,#ffd700,#fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2;margin-bottom:10px}<br/>
+.subtitle{font-size:1rem;color:rgba(255,255,255,0.75);line-height:1.6;max-width:560px;margin:0 auto}
+
+/* BADGES */
+.badges{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:20px 0}<br/>
+.badge-item{background:rgba(240,192,64,0.15);border:1px solid rgba(240,192,64,0.3);border-radius:20px;padding:5px 14px;font-size:12px;color:#f0c040;font-weight:500}
+
+/* FORM */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin:20px 0}<br/>
+@media(max-width:600px){.form-grid{grid-template-columns:1fr}}<br/>
+.form-group label{display:block;font-size:13px;font-weight:600;margin-bottom:7px;color:rgba(255,255,255,0.85);letter-spacing:.5px}<br/>
+.form-group input{width:100%;padding:13px 16px;background:rgba(255,255,255,0.1);border:1.5px solid rgba(255,255,255,0.15);border-radius:12px;color:#fff;font-size:15px;font-family:'Inter',sans-serif;transition:all .3s}<br/>
+.form-group input:focus{outline:none;border-color:#f0c040;background:rgba(255,255,255,0.15);box-shadow:0 0 0 3px rgba(240,192,64,0.15)}<br/>
+.form-group input::placeholder{color:rgba(255,255,255,0.4)}
+
+/* BOTÕES */
+.btn{padding:14px 28px;border:none;border-radius:12px;font-family:'Poppins',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:all .3s;display:inline-flex;align-items:center;gap:8px}<br/>
+.btn-primary{background:linear-gradient(135deg,#f0c040,#ffd700);color:#1a0533;box-shadow:0 4px 20px rgba(240,192,64,0.4);width:100%;justify-content:center;font-size:16px;padding:16px}<br/>
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 28px rgba(240,192,64,0.6)}<br/>
+.btn-secondary{background:rgba(255,255,255,0.1);color:#fff;border:1.5px solid rgba(255,255,255,0.2)}<br/>
+.btn-secondary:hover{background:rgba(255,255,255,0.2)}<br/>
+.btn-outline{background:transparent;color:#f0c040;border:2px solid #f0c040}<br/>
+.btn-outline:hover{background:rgba(240,192,64,0.15)}
+
+/* PROGRESS */
+.progress-wrap{margin-bottom:25px}<br/>
+.progress-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:13px}<br/>
+.progress-label{color:rgba(255,255,255,0.7)}<br/>
+.progress-pct{color:#f0c040;font-weight:700;font-size:15px}<br/>
+.progress-bar{height:8px;background:rgba(255,255,255,0.1);border-radius:10px;overflow:hidden}<br/>
+.progress-fill{height:100%;background:linear-gradient(90deg,#f0c040,#ffd700);border-radius:10px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+
+/* DIMENSÃO */
+.dim-header{background:linear-gradient(135deg,rgba(240,192,64,0.15),rgba(240,192,64,0.05));border:1px solid rgba(240,192,64,0.2);border-radius:16px;padding:20px 25px;margin-bottom:25px}<br/>
+.dim-tag{font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#f0c040;margin-bottom:6px}<br/>
+.dim-title{font-family:'Poppins',sans-serif;font-size:1.3rem;font-weight:700;margin-bottom:6px}<br/>
+.dim-desc{font-size:14px;color:rgba(255,255,255,0.7);line-height:1.5}
+
+/* QUESTÃO */
+.question-card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:20px;margin-bottom:15px;transition:border-color .3s}<br/>
+.question-card.answered{border-color:rgba(240,192,64,0.3)}<br/>
+.q-text{font-size:14.5px;line-height:1.6;margin-bottom:15px;color:rgba(255,255,255,0.9)}<br/>
+.q-num{color:#f0c040;font-weight:700;margin-right:6px}
+
+/* LIKERT */
+.likert{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}<br/>
+@media(max-width:500px){.likert{grid-template-columns:repeat(5,1fr);gap:4px}}<br/>
+.lk-btn{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 5px;background:rgba(255,255,255,0.07);border:1.5px solid rgba(255,255,255,0.1);border-radius:10px;cursor:pointer;transition:all .25s;font-family:'Inter',sans-serif}<br/>
+.lk-btn:hover{background:rgba(240,192,64,0.15);border-color:rgba(240,192,64,0.4)}<br/>
+.lk-btn.selected{background:linear-gradient(135deg,rgba(240,192,64,0.3),rgba(240,192,64,0.15));border-color:#f0c040;box-shadow:0 0 12px rgba(240,192,64,0.25)}<br/>
+.lk-num{font-size:18px;font-weight:700;color:rgba(255,255,255,0.6)}<br/>
+.lk-btn.selected .lk-num{color:#f0c040}<br/>
+.lk-label{font-size:9px;text-align:center;color:rgba(255,255,255,0.5);line-height:1.2}<br/>
+.lk-btn.selected .lk-label{color:rgba(240,192,64,0.8)}
+
+/* NAV */
+.nav-buttons{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:25px}
+
+/* GAUGE */
+.gauge-section{text-align:center;margin:10px 0 30px}<br/>
+.gauge-wrap{position:relative;display:inline-block;margin:0 auto}<br/>
+.gauge-wrap canvas{display:block}<br/>
+.gauge-center{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);text-align:center}<br/>
+.gauge-pct{font-family:'Poppins',sans-serif;font-size:2.8rem;font-weight:800;color:#f0c040;line-height:1}<br/>
+.gauge-label{font-size:12px;color:rgba(255,255,255,0.6);margin-top:3px}<br/>
+.iga-badge{display:inline-block;padding:10px 30px;border-radius:25px;font-family:'Poppins',sans-serif;font-size:1.1rem;font-weight:700;margin:15px 0 5px;box-shadow:0 4px 20px rgba(0,0,0,0.3)}
+
+/* PERFIL */
+.profile-card{border-radius:16px;padding:25px;margin:20px 0;text-align:center}<br/>
+.profile-icon{font-size:48px;display:block;margin-bottom:10px}<br/>
+.profile-name{font-family:'Poppins',sans-serif;font-size:1.4rem;font-weight:700;margin-bottom:10px}<br/>
+.profile-text{font-size:14px;line-height:1.7;color:rgba(255,255,255,0.85)}
+
+/* TABELA */
+.result-table{width:100%;border-collapse:collapse;font-size:13px}<br/>
+.result-table th{background:rgba(240,192,64,0.15);color:#f0c040;padding:12px;text-align:left;font-weight:600;font-size:12px;letter-spacing:.5px;text-transform:uppercase}<br/>
+.result-table td{padding:12px;border-bottom:1px solid rgba(255,255,255,0.06);color:rgba(255,255,255,0.85)}<br/>
+.result-table tr:last-child td{border-bottom:none}<br/>
+.level-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+
+/* SEÇÕES */
+.section-title{font-family:'Poppins',sans-serif;font-size:1.1rem;font-weight:700;margin-bottom:15px;display:flex;align-items:center;gap:8px}<br/>
+.strength-item,.dev-item{display:flex;align-items:center;gap:10px;padding:10px 15px;border-radius:10px;margin-bottom:8px;font-size:14px}<br/>
+.strength-item{background:rgba(39,174,96,0.1);border:1px solid rgba(39,174,96,0.25);color:rgba(255,255,255,0.85)}<br/>
+.dev-item{background:rgba(231,76,60,0.1);border:1px solid rgba(231,76,60,0.25);color:rgba(255,255,255,0.85)}
+
+/* RECOMENDAÇÕES */
+.rec-item{background:rgba(240,192,64,0.08);border:1px solid rgba(240,192,64,0.2);border-left:4px solid #f0c040;border-radius:0 10px 10px 0;padding:14px 18px;margin-bottom:12px}<br/>
+.rec-title{font-weight:600;font-size:14px;color:#f0c040;margin-bottom:5px}<br/>
+.rec-text{font-size:13px;color:rgba(255,255,255,0.75);line-height:1.6}
+
+/* ACTION BUTTONS */
+.action-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:25px}<br/>
+@media(max-width:600px){.action-row{grid-template-columns:1fr}}<br/>
+.action-row .btn{justify-content:center;padding:13px 10px;font-size:13px}
+
+/* CHART */
+.chart-wrap{position:relative;height:300px;margin:10px 0}
+
+/* PRINT */
+@media print{
+  body{background:#fff!important;color:#000!important;padding:0}<br/>
+  .screen{display:block!important}<br/>
+  #screen-welcome,#screen-quiz{display:none!important}<br/>
+  .action-row,.nav-buttons,.btn{display:none!important}<br/>
+  .card{box-shadow:none!important;background:#fff!important;border:1px solid #ddd!important;backdrop-filter:none!important}<br/>
+  .main-title{-webkit-text-fill-color:#1a0533!important;color:#1a0533!important}<br/>
+  .gauge-pct{color:#1a0533!important}<br/>
+  .dim-tag,.section-title,.q-num,.iga-badge{color:#333!important}<br/>
+  .result-table th{background:#f5f5f5!important;color:#333!important}<br/>
+  .result-table td{color:#333!important}<br/>
+  .chart-wrap{page-break-inside:avoid}
+}
+
+
+
+
+
+
+  
+    ⭐
+    Instituto Impulso Coaching de Liderança
+    Avaliação deAuto-Estima Saudável
+    Ferramenta cientificamente validada para mensurar seu Índice Global de Autoestima (IGA) — parte essencial da Inteligência Emocional Saudável.
+    
+      📘 Escala de Rosenberg
+      🔬 Inventário Coopersmith
+      💛 Self-Compassion Scale (Neff)
+      🧠 IE de Goleman
+      ❤️ Brené Brown
+    
+  
+  
+    📋 Informações do Participante
+    
+      
+        NOME COMPLETO *
+        
+      
+      
+        E-MAIL *
+        
+      
+    
+    🚀 Iniciar Avaliação Agora
+    40 afirmações • ~8 minutos • Resultado imediato com gráficos
+  
+
+
+
+
+  
+    
+      
+        Dimensão 1 de 5
+        20%
+      
+      
+    
+    
+    
+    
+      ◀ Anterior
+      Próximo ▶
+    
+  
+
+
+
+
+  
+    🏆
+    Instituto Impulso Coaching de Liderança
+    Seu Resultado
+    
+  
+
+  
+    
+      
+      
+    
+  
+
+  
+
+  
+    📡 Radar das 5 Dimensões
+    
+  
+
+  
+    📊 Pontuação por Dimensão
+    
+  
+
+  
+    📋 Tabela Detalhada
+    
+      
+    
+  
+
+  
+    
+    
+  
+
+  
+
+  
+    
+      💾 Salvar PDF
+      📧 Enviar por E-mail
+      🔄 Nova Avaliação
+    
+  
+
+
+
+// ===== DADOS =====
+const DIMS = [
+  {
+    name:'Autovalorização e Autoaceitação',<br/>
+    desc:'Mede o reconhecimento do seu valor pessoal e a capacidade de aceitar a si mesmo com autenticidade, incluindo falhas e limitações.',<br/>
+    icon:'💎',<br/>
+    items:[
+      'Sinto que sou uma pessoa de valor, pelo menos tanto quanto outras pessoas.',
+      'Às vezes me sinto inútil.',
+      'Acredito que tenho várias qualidades positivas.',
+      'Tenho dificuldade em aceitar meus defeitos e limitações.',
+      'Consigo reconhecer minhas conquistas sem minimizá-las.',
+      'No geral, estou satisfeito(a) comigo mesmo(a).',
+      'Me comparo negativamente com outras pessoas com frequência.',
+      'Acredito que mereço ser feliz e ter coisas boas na vida.'
+    ],
+    reversed:[1,3,6]
+  },
+  {
+    name:'Autoconfiança e Competência Percebida',<br/>
+    desc:'Avalia sua crença na própria capacidade de agir, decidir e superar desafios com segurança e determinação.',<br/>
+    icon:'⚡',<br/>
+    items:[
+      'Sinto-me capaz de resolver a maioria dos desafios que enfrento.',
+      'Duvido muito das minhas decisões antes de tomá-las.',
+      'Acredito que posso aprender novas habilidades quando necessário.',
+      'Tenho medo de falhar e isso me impede de tentar coisas novas.',
+      'Confio no meu julgamento na maior parte das situações.',
+      'Sinto que minha opinião tem valor e merece ser ouvida.',
+      'Evito situações que me coloquem em destaque por insegurança.',
+      'Quando cometo erros, consigo aprender com eles sem me devastar.'
+    ],
+    reversed:[1,3,6]
+  },
+  {
+    name:'Autoimagem e Aceitação Social',<br/>
+    desc:'Explora como você se percebe fisicamente e socialmente, e sua capacidade de se expressar de forma autêntica.',<br/>
+    icon:'🌟',<br/>
+    items:[
+      'Sinto-me confortável com minha aparência física.',
+      'Me preocupo excessivamente com o que os outros pensam de mim.',
+      'Consigo me expressar autenticamente mesmo diante de críticas.',
+      'Sinto vergonha de aspectos da minha personalidade.',
+      'Me sinto à vontade em ambientes sociais e novas situações.',
+      'Aceito elogios com naturalidade, sem os desvalorizar.',
+      'Preciso constantemente da aprovação dos outros para me sentir bem.',
+      'Me sinto orgulhoso(a) de quem sou como pessoa.'
+    ],
+    reversed:[1,3,6]
+  },
+  {
+    name:'Autocompaixão e Diálogo Interno',<br/>
+    desc:'Mede a qualidade do seu relacionamento com você mesmo, especialmente nos momentos de erro, falha ou dificuldade.',<br/>
+    icon:'❤️',<br/>
+    items:[
+      'Quando falho em algo, trato-me com a mesma gentileza que trataria um amigo.',
+      'Minha voz interna é frequentemente crítica e severa comigo mesmo(a).',
+      'Consigo identificar e questionar pensamentos negativos sobre mim.',
+      'Fico ruminando por muito tempo quando cometo um erro.',
+      'Consigo me perdoar quando faço algo errado.',
+      'Reconheço que imperfeições fazem parte da experiência humana.',
+      'Sou muito mais exigente comigo mesmo(a) do que com os outros.',
+      'Pratico autocompaixão como forma de cuidar da minha saúde emocional.'
+    ],
+    reversed:[1,3,6]
+  },
+  {
+    name:'Estabilidade Emocional e Resiliência',<br/>
+    desc:'Avalia sua capacidade de manter um senso de valor consistente mesmo sob pressão, críticas, rejeições ou fracassos.',<br/>
+    icon:'🛡️',<br/>
+    items:[
+      'Minha autoestima se mantém relativamente estável mesmo sob pressão.',
+      'Críticas me desestruturam emocionalmente por muito tempo.',
+      'Consigo manter meu senso de valor mesmo diante de rejeições.',
+      'Meu humor e autoconceito dependem muito do sucesso ou fracasso recente.',
+      'Me recupero de situações difíceis sem perder minha autoconfiança.',
+      'Consigo estabelecer limites saudáveis sem sentir culpa excessiva.',
+      'Em momentos de conflito, perco facilmente a confiança em mim mesmo(a).',
+      'Mantenho uma visão positiva de mim mesmo(a) mesmo nos dias difíceis.'
+    ],
+    reversed:[1,3,6]
+  }
+];
+
+const LABELS_LIKERT=['Discordo
+Totalmente','Discordo','Neutro','Concordo','Concordo
+Totalmente'];
+
+const PROFILES=[
+  {
+    min:0,max:39,<br/>
+    label:'Autoestima Crítica',color:'#e74c3c',<br/>
+    name:'O Crítico Interno',icon:'🔴',<br/>
+    text:'Você tende a ter uma voz interna muito exigente e punitiva. Sua autoestima está em um nível que gera sofrimento emocional significativo. Você pode se sentir inútil, indigno(a) de afeto ou constantemente inferior aos outros. Este é o ponto de partida para uma jornada de transformação profunda e necessária.',<br/>
+    recs:{<br/>
+      d0:'Pratique diariamente o exercício de listar 3 qualidades suas ao acordar. Resistência é normal — persista.',<br/>
+      d1:'Comece com metas pequenas e celebre cada vitória. Crie um "diário de conquistas" com registros semanais.',<br/>
+      d2:'Reduza o tempo em redes sociais. Pratique o espelho: olhe para si mesmo(a) com curiosidade, não crítica.',<br/>
+      d3:'Busque terapia cognitivo-comportamental (TCC) ou coaching focado em autocompaixão. A voz interna pode mudar.',<br/>
+      d4:'Implemente uma rotina de autocuidado diário: sono, exercício, alimentação. Base para a estabilidade emocional.'
+    }
+  },
+  {
+    min:40,max:54,<br/>
+    label:'Autoestima Baixa',color:'#e67e22',<br/>
+    name:'O Dependente de Aprovação',icon:'🟠',<br/>
+    text:'Sua autoestima ainda busca muito suporte externo — você tende a se sentir bem quando aprovado(a) e mal quando criticado(a). Existe consciência do problema, mas ainda há grande dependência do olhar alheio. O trabalho aqui é fortalecer sua bússola interna e reduzir a influência do julgamento externo.',<br/>
+    recs:{<br/>
+      d0:'Escreva uma "carta de amor próprio" para si mesmo(a). Releia sempre que sentir necessidade de aprovação.',<br/>
+      d1:'Tome uma decisão pequena por semana sem pedir a opinião de ninguém. Registre o resultado.',<br/>
+      d2:'Pratique dizer "não" a pedidos que não estejam alinhados com seus valores — comece com situações de baixo risco.',<br/>
+      d3:'Identifique sua "voz crítica interna" e dê um nome a ela. Isso cria distância psicológica e reduz seu poder.',<br/>
+      d4:'Crie um "âncora de estabilidade": uma frase, música ou imagem que te reconecte ao seu valor independente de circunstâncias.'
+    }
+  },
+  {
+    min:55,max:69,<br/>
+    label:'Autoestima Moderada',color:'#f1c40f',<br/>
+    name:'O Inseguro Capaz',icon:'🟡',<br/>
+    text:'Você possui mais recursos e capacidades do que percebe. Sua autoestima está em construção — há momentos de confiança, mas também de forte dúvida. Você tem base sólida para crescer, e pequenos ajustes podem gerar grandes mudanças. O principal trabalho está em consolidar a crença no seu valor.',<br/>
+    recs:{<br/>
+      d0:'Faça uma revisão de evidências: liste 10 situações em que você demonstrou valor real. Use isso como âncora.',<br/>
+      d1:'Assuma um projeto desafiador que te tire da zona de conforto. O progresso constrói confiança genuína.',<br/>
+      d2:'Pratique "postura de poder" (Amy Cuddy) por 2 minutos antes de situações sociais importantes.',<br/>
+      d3:'Implemente o "protocolo de autocompaixão de 3 passos" de Kristin Neff em momentos de autocrítica.',<br/>
+      d4:'Identifique seus "gatilhos de instabilidade" emocional e crie um plano de resposta antecipado para cada um.'
+    }
+  },
+  {
+    min:70,max:84,<br/>
+    label:'Autoestima Elevada',color:'#27ae60',<br/>
+    name:'O Autoestimado em Desenvolvimento',icon:'🟢',<br/>
+    text:'Sua autoestima está em ótimo caminho! Você demonstra uma base sólida de autovalorização, confiança e aceitação. Ainda há áreas pontuais para refinar, especialmente sob pressão ou em situações de exposição. O foco agora é consolidar os ganhos e elevar as dimensões que ainda oscilam.',<br/>
+    recs:{<br/>
+      d0:'Pratique mentoria reversa: ensine alguém algo que você domina. Ensinar solidifica a crença na própria competência.',<br/>
+      d1:'Estabeleça metas de "zona de desconforto produtiva" — desafios que te esticam sem te quebrar.',<br/>
+      d2:'Aprofunde o autoconhecimento com ferramentas como MBTI, DISC ou Eneagrama para usar seus pontos fortes estrategicamente.',<br/>
+      d3:'Crie rituais de celebração: reconheça suas conquistas com a mesma energia que dedica às metas futuras.',<br/>
+      d4:'Desenvolva um "manual pessoal de resiliência": suas estratégias comprovadas para se recuperar rapidamente.'
+    }
+  },
+  {
+    min:85,max:100,<br/>
+    label:'Autoestima Excelente',color:'#f0c040',<br/>
+    name:'O Autoestimado Integrado',icon:'⭐',<br/>
+    text:'Você demonstra uma autoestima sólida, saudável e integrada — marca registrada da Inteligência Emocional de alto nível. Sua percepção de valor é estável, sua autoconfiança é genuína e seu diálogo interno é construtivo. Você é uma referência natural de saúde emocional e tem o potencial de inspirar e desenvolver outros.',<br/>
+    recs:{<br/>
+      d0:'Use sua autoestima como plataforma para servir: lidere, inspire e desenvolva outras pessoas com autenticidade.',<br/>
+      d1:'Eleve o nível dos seus desafios: metas transformacionais exigem a autoestima que você desenvolveu.',<br/>
+      d2:'Compartilhe seu processo de desenvolvimento com sua rede — sua história pode ser a transformação de alguém.',<br/>
+      d3:'Aprofunde a prática contemplativa (meditação, journaling) para manter e expandir sua saúde emocional.',<br/>
+      d4:'Invista em coaching de alta performance para maximizar seu potencial e impacto no mundo.'
+    }
+  }
+];
+
+// ===== ESTADO =====
+let currentDim=0;
+let responses=Array(5).fill(null).map(()=>Array(8).fill(0));
+let userName='',userEmail='';
+let radarInst=null,barInst=null;
+
+// ===== FUNÇÕES =====
+function $(id){return document.getElementById(id)}
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  $(id).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function startAssessment(){
+  userName=$('inp-name').value.trim();
+  userEmail=$('inp-email').value.trim();
+  if(!userName){alert('Por favor, informe seu nome completo.');$('inp-name').focus();return;}
+  if(!userEmail||!userEmail.includes('@')){alert('Por favor, informe um e-mail válido.');$('inp-email').focus();return;}
+  localStorage.setItem('ae_name',userName);
+  localStorage.setItem('ae_email',userEmail);
+  loadDim(0);
+  showScreen('screen-quiz');
+}
+
+function loadDim(d){
+  currentDim=d;
+  const dim=DIMS[d];
+  const pct=Math.round(((d+1)/5)*100);
+  $('progress-label').textContent=`Dimensão ${d+1} de 5`;
+  $('progress-pct').textContent=pct+'%';
+  $('progress-fill').style.width=pct+'%';
+  $('dim-header').innerHTML=`<div class="dim-tag">Dimensão ${d+1} de 5 • ${dim.icon}</div><div class="dim-title">${dim.name}</div><div class="dim-desc">${dim.desc}</div>`;
+  
+  let html='';
+  dim.items.forEach((item,i)=>{
+    const ans=responses[d][i];
+    html+=`<div class="question-card${ans>0?' answered':''}" id="qcard-${i}">
+      <p class="q-text"><span class="q-num">${i+1}.</span>${item}</p>
+      <div class="likert">`;
+    for(let v=1;v<=5;v++){
+      html+=`<button class="lk-btn${ans===v?' selected':''}" onclick="selectAns(${i},${v},this)">
+        <span class="lk-num">${v}</span>
+        <span class="lk-label">${LABELS_LIKERT[v-1]}</span>
+      </button>`;
+    }
+    html+='</div></div>';
+  });
+  $('questions-container').innerHTML=html;
+  $('btn-prev').style.opacity=d===0?'0.4':'1';
+  $('btn-prev').disabled=d===0;
+  $('btn-next').textContent=d===4?'✅ Ver Meus Resultados':'Próximo ▶';
+}
+
+function selectAns(qIdx,val,btn){
+  responses[currentDim][qIdx]=val;
+  const card=$(`qcard-${qIdx}`);
+  card.classList.add('answered');
+  card.querySelectorAll('.lk-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  localStorage.setItem('ae_responses',JSON.stringify(responses));
+}
+
+function prevDim(){if(currentDim>0){loadDim(currentDim-1);window.scrollTo({top:0,behavior:'smooth'});}}
+function nextDim(){
+  const unanswered=responses[currentDim].findIndex(r=>r===0);
+  if(unanswered!==-1){
+    const card=$(`qcard-${unanswered}`);
+    card.style.border='2px solid #e74c3c';
+    card.scrollIntoView({behavior:'smooth',block:'center'});
+    setTimeout(()=>card.style.border='',2000);
+    return;
+  }
+  if(currentDim<4){loadDim(currentDim+1);window.scrollTo({top:0,behavior:'smooth'});}
+  else showResults();
+}
+
+function calcScores(){
+  return responses.map((res,di)=>{
+    let sum=0;
+    res.forEach((r,i)=>{sum+=DIMS[di].reversed.includes(i)?6-r:r;});
+    return sum;
+  });
+}
+
+function getClassification(iga){
+  return PROFILES.find(p=>iga>=p.min&&iga<=p.max)||PROFILES[PROFILES.length-1];
+}
+
+function getLevelInfo(pct){
+  if(pct>=85)return{label:'Excelente',color:'#f0c040'};<br/>
+  if(pct>=70)return{label:'Elevado',color:'#27ae60'};<br/>
+  if(pct>=55)return{label:'Moderado',color:'#f1c40f'};<br/>
+  if(pct>=40)return{label:'Baixo',color:'#e67e22'};<br/>
+  return{label:'Crítico',color:'#e74c3c'};
+}
+
+function drawGauge(pct){
+  const canvas=$('gaugeCanvas');
+  const ctx=canvas.getContext('2d');
+  const cx=140,cy=140,r=110,lw=18;
+  ctx.clearRect(0,0,280,155);
+  
+  // Segmentos coloridos
+  const segs=[
+    {start:Math.PI,end:Math.PI*1.2,color:'#e74c3c'},<br/>
+    {start:Math.PI*1.2,end:Math.PI*1.4,color:'#e67e22'},<br/>
+    {start:Math.PI*1.4,end:Math.PI*1.6,color:'#f1c40f'},<br/>
+    {start:Math.PI*1.6,end:Math.PI*1.8,color:'#27ae60'},<br/>
+    {start:Math.PI*1.8,end:Math.PI*2,color:'#f0c040'}
+  ];
+  segs.forEach(s=>{
+    ctx.beginPath();ctx.arc(cx,cy,r,s.start,s.end);
+    ctx.lineWidth=lw;ctx.strokeStyle=s.color;
+    ctx.lineCap='butt';ctx.stroke();
+  });
+  
+  // Track fundo
+  ctx.beginPath();ctx.arc(cx,cy,r,Math.PI,0);
+  ctx.lineWidth=lw+2;ctx.strokeStyle='rgba(255,255,255,0.05)';ctx.stroke();
+  segs.forEach(s=>{
+    ctx.beginPath();ctx.arc(cx,cy,r,s.start,s.end);
+    ctx.lineWidth=lw;ctx.strokeStyle=s.color;ctx.stroke();
+  });
+  
+  // Agulha
+  const angle=Math.PI+(pct/100)*Math.PI;
+  const nx=cx+r*0.82*Math.cos(angle),ny=cy+r*0.82*Math.sin(angle);
+  ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(nx,ny);
+  ctx.lineWidth=3;ctx.strokeStyle='#fff';ctx.lineCap='round';ctx.stroke();
+  ctx.beginPath();ctx.arc(cx,cy,8,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();
+  
+  // Texto IGA
+  ctx.font='bold 28px Poppins,Inter,sans-serif';
+  ctx.fillStyle='#f0c040';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText(pct.toFixed(1)+'%',cx,cy-20);
+  ctx.font='12px Inter,sans-serif';
+  ctx.fillStyle='rgba(255,255,255,0.6)';
+  ctx.fillText('Índice Global de Autoestima',cx,cy+5);
+}
+
+function showResults(){
+  showScreen('screen-results');
+  const scores=calcScores();
+  const pcts=scores.map(s=>(s/40)*100);
+  const iga=pcts.reduce((a,b)=>a+b,0)/5;
+  const cls=getClassification(iga);
+  const date=new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
+  
+  $('res-participant').innerHTML=`👤 <strong>${userName}</strong> &nbsp;|&nbsp; 📅 ${date}`;
+  
+  // Gauge
+  setTimeout(()=>drawGauge(iga),100);
+  $('iga-badge-wrap').innerHTML=`<div class="iga-badge" style="background:${cls.color}20;border:2px solid ${cls.color};color:${cls.color}">${cls.label}</div>`;
+  
+  // Perfil
+  $('profile-section').innerHTML=`
+    <div class="profile-card" style="background:${cls.color}12;border:1px solid ${cls.color}30">
+      <span class="profile-icon">${cls.icon}</span>
+      <div class="profile-name" style="color:${cls.color}">${cls.name}</div>
+      <p class="profile-text">${cls.text}</p>
+    </div>`;
+  
+  // Radar
+  if(radarInst)radarInst.destroy();
+  radarInst=new Chart($('radarChart'),{
+    type:'radar',<br/>
+    data:{<br/>
+      labels:DIMS.map(d=>d.name.split(' e ')[0]),<br/>
+      datasets:[{<br/>
+        label:'Seu Perfil',<br/>
+        data:pcts.map(p=>p.toFixed(1)),<br/>
+        backgroundColor:'rgba(240,192,64,0.15)',<br/>
+        borderColor:'#f0c040',<br/>
+        pointBackgroundColor:'#f0c040',<br/>
+        pointBorderColor:'#fff',<br/>
+        pointRadius:5,<br/>
+        borderWidth:2
+      }]
+    },
+    options:{<br/>
+      responsive:true,maintainAspectRatio:false,<br/>
+      scales:{r:{min:0,max:100,ticks:{color:'rgba(255,255,255,0.5)',font:{size:10}},grid:{color:'rgba(255,255,255,0.1)'},pointLabels:{color:'rgba(255,255,255,0.8)',font:{size:11}},angleLines:{color:'rgba(255,255,255,0.1)'}}},<br/>
+      plugins:{legend:{labels:{color:'#fff'}}}
+    }
+  });
+  
+  // Barras
+  if(barInst)barInst.destroy();
+  barInst=new Chart($('barChart'),{
+    type:'bar',<br/>
+    data:{<br/>
+      labels:DIMS.map(d=>d.icon+' '+d.name.substring(0,20)+'...'),<br/>
+      datasets:[{<br/>
+        label:'% de Saúde Emocional',<br/>
+        data:pcts.map(p=>p.toFixed(1)),<br/>
+        backgroundColor:pcts.map(p=>getLevelInfo(p).color+'cc'),<br/>
+        borderColor:pcts.map(p=>getLevelInfo(p).color),<br/>
+        borderWidth:2,borderRadius:8
+      }]
+    },
+    options:{<br/>
+      indexAxis:'y',responsive:true,maintainAspectRatio:false,<br/>
+      scales:{<br/>
+        x:{min:0,max:100,ticks:{color:'rgba(255,255,255,0.7)',callback:v=>v+'%'},grid:{color:'rgba(255,255,255,0.08)'}},<br/>
+        y:{ticks:{color:'rgba(255,255,255,0.8)',font:{size:11}},grid:{display:false}}
+      },
+      plugins:{legend:{display:false}}
+    }
+  });
+  
+  // Tabela
+  const interps=[
+    ['Senso de valor baixo — precisa de trabalho profundo','Autovalorização em desenvolvimento','Senso de valor moderado','Boa autoaceitação','Excelente senso de valor e autoaceitação'],
+    ['Insegurança paralisante — dificuldade de agir','Autoconfiança frágil e dependente do contexto','Confiança situacional — oscila com pressão','Boa confiança na maioria das situações','Alta confiança — decide e age com segurança'],
+    ['Forte dependência da aprovação alheia','Autoimagem comprometida pelo julgamento externo','Autoimagem moderada — sensível a críticas','Boa aceitação social e autoimagem','Identidade autêntica e segura socialmente'],
+    ['Voz interna muito punitiva e destrutiva','Diálogo interno crítico e pouco compassivo','Autocompaixão limitada — ruminação presente','Diálogo interno positivo e autocompaixão sólida','Excelente autocompaixão e diálogo interno construtivo'],
+    ['Instabilidade emocional significativa','Baixa resiliência — muito afetado(a) por eventos externos','Estabilidade moderada — oscila em situações difíceis','Boa resiliência e estabilidade emocional','Alta estabilidade — se recupera rapidamente']
+  ];
+  
+  let tHtml='<tr><th>Dimensão</th><th>Pts</th><th>%</th><th>Nível</th><th>Interpretação</th></tr>';
+  DIMS.forEach((d,i)=>{
+    const lv=getLevelInfo(pcts[i]);
+    const interp_idx=pcts[i]>=85?4:pcts[i]>=70?3:pcts[i]>=55?2:pcts[i]>=40?1:0;
+    tHtml+=`<tr>
+      <td>${d.icon} ${d.name}</td>
+      <td><strong>${scores[i]}</strong>/40</td>
+      <td><strong style="color:${lv.color}">${pcts[i].toFixed(1)}%</strong></td><br/>
+      <td><span class="level-badge" style="background:${lv.color}22;color:${lv.color};border:1px solid ${lv.color}44">${lv.label}</span></td><br/>
+      <td style="font-size:12px;color:rgba(255,255,255,0.7)">${interps[i][interp_idx]}</td>
+    </tr>`;
+  });
+  $('result-table').innerHTML=tHtml;
+  
+  // Pontos fortes / desenvolvimento
+  const strong=DIMS.filter((_,i)=>pcts[i]>=70);
+  const dev=DIMS.filter((_,i)=>pcts[i]<70);
+  $('strengths-section').innerHTML=`<div class="section-title">✅ Pontos Fortes</div>${strong.length?strong.map(d=>`<div class="strength-item">✅ ${d.icon} ${d.name}</div>`).join(''):'<p style="color:rgba(255,255,255,0.5);font-size:14px">Continue o desenvolvimento — os pontos fortes estão sendo construídos!</p>'}`;<br/>
+  $('dev-section').innerHTML=`<div class="section-title">🎯 Áreas de Desenvolvimento</div>${dev.length?dev.map(d=>`<div class="dev-item">🎯 ${d.icon} ${d.name}</div>`).join(''):'<div class="strength-item">🏆 Parabéns! Todas as dimensões estão em nível elevado ou excelente!</div>'}`;
+  
+  // Recomendações
+  const sorted=[...pcts.map((p,i)=>({p,i}))].sort((a,b)=>a.p-b.p).slice(0,3);
+  const recKeys=['d0','d1','d2','d3','d4'];
+  let recHtml='<div class="section-title">💡 Recomendações Personalizadas</div>';
+  sorted.forEach(({p,i})=>{
+    recHtml+=`<div class="rec-item">
+      <div class="rec-title">${DIMS[i].icon} ${DIMS[i].name} — ${p.toFixed(0)}%</div>
+      <div class="rec-text">${cls.recs[recKeys[i]]}</div>
+    </div>`;
+  });
+  $('rec-section').innerHTML=recHtml;
+}
+
+function savePDF(){
+  window.print();
+}
+
+function sendEmail(){
+  const scores=calcScores();
+  const pcts=scores.map(s=>(s/40)*100);
+  const iga=pcts.reduce((a,b)=>a+b,0)/5;
+  const cls=getClassification(iga);
+  const date=new Date().toLocaleDateString('pt-BR');
+  
+  const subject=`Resultado: Avaliação de Auto-Estima Saudável — ${userName}`;
+  let body=`AVALIAÇÃO DE AUTO-ESTIMA SAUDÁVEL
+Instituto Impulso Coaching de Liderança
+
+`;
+  body+=`PARTICIPANTE: ${userName}<br/>
+E-MAIL: ${userEmail}<br/>
+DATA: ${date}
+
+`;
+  body+=`══════════════════════════════════
+ÍNDICE GLOBAL DE AUTOESTIMA (IGA)
+══════════════════════════════════
+`;
+  body+=`IGA: ${iga.toFixed(1)}%<br/>
+Classificação: ${cls.label}<br/>
+Perfil: ${cls.name}
+
+`;
+  body+=`══════════════════════════════════
+RESULTADO POR DIMENSÃO
+══════════════════════════════════
+`;
+  DIMS.forEach((d,i)=>{
+    const lv=getLevelInfo(pcts[i]);
+    body+=`${i+1}. ${d.name}
+   Pontuação: ${scores[i]}/40 | ${pcts[i].toFixed(1)}% | ${lv.label}
+
+`;
+  });
+  body+=`══════════════════════════════════
+DESCRIÇÃO DO PERFIL
+══════════════════════════════════
+${cls.text}
+
+`;
+  body+=`══════════════════════════════════
+Enviado pelo Sistema de Avaliação
+Instituto Impulso Coaching de Liderança`;
+  
+  const mailto=`mailto:impulsoflow@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  window.location.href=mailto;
+}
+
+function newAssessment(){
+  localStorage.clear();
+  responses=Array(5).fill(null).map(()=>Array(8).fill(0));
+  userName='';userEmail='';currentDim=0;
+  $('inp-name').value='';$('inp-email').value='';
+  showScreen('screen-welcome');
+}
+
+// Restaurar dados salvos
+(function(){
+  const saved=localStorage.getItem('ae_responses');
+  if(saved){
+    try{
+      responses=JSON.parse(saved);
+      $('inp-name').value=localStorage.getItem('ae_name')||'';
+      $('inp-email').value=localStorage.getItem('ae_email')||'';
+    }catch(e){}
+  }
+})();
+
+

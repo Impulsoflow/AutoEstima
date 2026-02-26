@@ -1,394 +1,135 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Avaliação de Auto-Estima Saudável — Instituto Impulso Coaching de Liderança</title>
-<style>
-:root{
-  --bg1:#052e16; --bg2:#166534; --bg3:#22c55e;
-  --card:rgba(255,255,255,.10);
-  --card2:rgba(255,255,255,.14);
-  --border:rgba(255,255,255,.18);
-  --text:#ecfdf5;
-  --muted:rgba(236,253,245,.75);
-  --shadow:0 18px 60px rgba(0,0,0,.35);
-  --accent:#34d399;
-  --accent2:#a7f3d0;
-  --danger:#fb7185;
-  --warn:#fbbf24;
-  --ok:#22c55e;
-}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Avaliação de Autoestima Saudável — Instituto Impulso</title>
 
-*{box-sizing:border-box}
-html,body{height:100%}
-body{
-  margin:0;
-  color:var(--text);
-  font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial;
-  background: radial-gradient(1000px 700px at 15% 10%, rgba(134,239,172,.28), transparent 60%),
-              radial-gradient(900px 700px at 85% 25%, rgba(52,211,153,.24), transparent 55%),
-              linear-gradient(135deg,var(--bg1) 0%,var(--bg2) 42%,var(--bg3) 100%);
-}
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.4.0/purify.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-a{color:inherit}
-.container{max-width:1100px;margin:0 auto;padding:26px 18px 70px}
-.header{
-  display:flex;flex-direction:column;gap:10px;
-  padding:22px 20px;border:1px solid var(--border);
-  background:linear-gradient(180deg,rgba(255,255,255,.12),rgba(255,255,255,.08));
-  border-radius:18px;box-shadow:var(--shadow);
-  backdrop-filter: blur(10px);
-}
-.brand{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
-.institute{font-weight:700;letter-spacing:.2px}
-.tag{
-  padding:7px 10px;border-radius:999px;
-  border:1px solid var(--border);
-  background:rgba(0,0,0,.12);
-  color:var(--muted);
-  font-size:12px;
-}
-h1{margin:0;font-size:28px;line-height:1.15}
-.sub{margin:0;color:var(--muted);max-width:900px}
-
-.badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
-.badge-item{
-  font-size:12px;padding:7px 10px;border-radius:999px;
-  border:1px solid var(--border);
-  background:rgba(255,255,255,.08);
-  color:var(--accent2);
-}
-
-.grid{display:grid;grid-template-columns:1.1fr .9fr;gap:16px;margin-top:16px}
-@media (max-width:900px){.grid{grid-template-columns:1fr}}
-
-.card{
-  border:1px solid var(--border);
-  background:linear-gradient(180deg,rgba(255,255,255,.11),rgba(255,255,255,.07));
-  border-radius:18px;
-  box-shadow:var(--shadow);
-  backdrop-filter: blur(10px);
-}
-.card-inner{padding:18px}
-
-.section-title{margin:0 0 12px;font-size:16px;letter-spacing:.2px}
-.small{font-size:12px;color:var(--muted);margin-top:6px}
-
-.form{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-@media (max-width:650px){.form{grid-template-columns:1fr}}
-.form-group{display:flex;flex-direction:column;gap:6px}
-label{font-size:12px;color:var(--muted);letter-spacing:.25px}
-input{
-  width:100%;
-  padding:12px 12px;
-  border-radius:12px;
-  border:1px solid rgba(255,255,255,.20);
-  background:rgba(0,0,0,.12);
-  color:var(--text);
-  outline:none;
-}
-input:focus{border-color:rgba(167,243,208,.65);box-shadow:0 0 0 4px rgba(52,211,153,.12)}
-
-.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
-button{
-  border:1px solid transparent;
-  border-radius:12px;
-  padding:12px 14px;
-  cursor:pointer;
-  font-weight:700;
-  letter-spacing:.2px;
-}
-.btn-primary{
-  background:linear-gradient(180deg,#34d399,#10b981);
-  color:#06281c;
-}
-.btn-secondary{
-  background:rgba(0,0,0,.14);
-  color:var(--text);
-  border-color:rgba(255,255,255,.22);
-}
-.btn-outline{
-  background:transparent;
-  color:var(--text);
-  border-color:rgba(255,255,255,.28);
-}
-button:disabled{opacity:.55;cursor:not-allowed}
-
-.hr{height:1px;background:rgba(255,255,255,.14);margin:14px 0}
-
-.progress{
-  display:flex;align-items:center;justify-content:space-between;
-  gap:10px;margin-bottom:10px
-}
-.progress-label,.progress-pct{font-size:12px;color:var(--muted)}
-.progress-bar{
-  height:10px;border-radius:999px;background:rgba(0,0,0,.18);
-  border:1px solid rgba(255,255,255,.18);
-  overflow:hidden;
-}
-.progress-fill{height:100%;width:0%;background:linear-gradient(90deg,#a7f3d0,#34d399,#10b981)}
-
-.dim-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.dim-tag{
-  font-size:12px;color:#06281c;
-  background:linear-gradient(180deg,#a7f3d0,#34d399);
-  padding:6px 10px;border-radius:999px;
-}
-.dim-title{margin:0;font-size:18px}
-.dim-desc{margin:8px 0 0;color:var(--muted);font-size:13px;max-width:900px}
-
-.q-list{display:flex;flex-direction:column;gap:10px;margin-top:14px}
-.question-card{
-  padding:14px;border-radius:14px;
-  border:1px solid rgba(255,255,255,.18);
-  background:rgba(0,0,0,.10);
-}
-.q-text{margin:0 0 10px;font-size:14px;line-height:1.35}
-.q-num{color:var(--accent2);font-weight:800;margin-right:6px}
-.likert{display:flex;gap:8px;flex-wrap:wrap}
-.lk-btn{
-  flex:1 1 150px;
-  padding:10px 10px;
-  background:rgba(255,255,255,.07);
-  border:1px solid rgba(255,255,255,.18);
-  color:var(--text);
-}
-.lk-btn strong{display:block;font-size:13px}
-.lk-btn span{display:block;font-size:11px;color:var(--muted);margin-top:2px}
-.lk-btn.active{
-  border-color:rgba(167,243,208,.70);
-  background:rgba(52,211,153,.20);
-  box-shadow:0 0 0 4px rgba(52,211,153,.10) inset;
-}
-
-.hidden{display:none!important}
-
-.result-top{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center}
-.res-participant{color:var(--muted);font-size:12px}
-.iga-wrap{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
-@media (max-width:900px){.iga-wrap{grid-template-columns:1fr}}
-
-.kpi{
-  padding:14px;border-radius:16px;
-  border:1px solid rgba(255,255,255,.18);
-  background:rgba(0,0,0,.10);
-}
-.kpi-label{font-size:12px;color:var(--muted)}
-.kpi-value{font-size:30px;font-weight:900;margin-top:6px}
-.kpi-sub{font-size:12px;color:var(--muted);margin-top:4px}
-
-.iga-badge{
-  display:inline-flex;align-items:center;gap:8px;
-  padding:8px 10px;border-radius:999px;
-  font-size:12px;font-weight:900;
-  border:1px solid rgba(255,255,255,.22);
-  background:rgba(0,0,0,.14);
-}
-.profile{
-  margin-top:10px;padding:14px;border-radius:16px;
-  border:1px solid rgba(255,255,255,.18);
-  background:rgba(0,0,0,.10);
-}
-.profile h3{margin:0 0 6px;font-size:16px}
-.profile p{margin:0;color:var(--muted);font-size:13px;line-height:1.45}
-
-.table-wrap{overflow:auto;border-radius:14px;border:1px solid rgba(255,255,255,.16);margin-top:12px}
-table{width:100%;border-collapse:collapse;min-width:720px;background:rgba(0,0,0,.10)}
-th,td{padding:10px 10px;border-bottom:1px solid rgba(255,255,255,.12);font-size:13px}
-th{color:var(--accent2);text-align:left;font-size:12px;letter-spacing:.25px}
-td{color:rgba(236,253,245,.92)}
-tr:last-child td{border-bottom:none}
-
-.pills{display:flex;flex-direction:column;gap:8px;margin-top:10px}
-.pill{
-  display:flex;gap:10px;align-items:flex-start;
-  padding:10px 12px;border-radius:14px;
-  border:1px solid rgba(255,255,255,.16);
-  background:rgba(0,0,0,.10);
-}
-.pill b{color:var(--accent2)}
-.pill span{color:var(--muted);font-size:13px;line-height:1.35}
-.footer-note{margin-top:10px;color:var(--muted);font-size:12px;line-height:1.4}
-</style>
+  <style>
+    body{
+      background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    }
+    .card-soft{
+      background: rgba(255,255,255,.86);
+      border: 1px solid rgba(16,185,129,.18);
+      box-shadow: 0 18px 50px rgba(2,6,23,.08);
+      backdrop-filter: blur(10px);
+    }
+    .scale-option{
+      transition: all .16s ease;
+      border: 2px solid #d1d5db;
+      border-radius: 12px;
+      padding: 10px 8px;
+      text-align: center;
+      cursor: pointer;
+      background: linear-gradient(135deg,#ffffff,#f7fee7);
+      font-weight: 800;
+      user-select:none;
+    }
+    .scale-option:hover{ background:#ecfccb; border-color:#34d399; }
+    .scale-option:active{ transform: scale(1.05); }
+    .scale-option.selected{
+      background: linear-gradient(135deg,#34d399,#10b981);
+      color:#064e3b;
+      border-color:#10b981;
+    }
+    .btn-primary{ background: linear-gradient(135deg,#34d399,#10b981); transition: transform .1s ease; }
+    .btn-primary:active{ transform: scale(1.03); }
+    .btn-secondary{ background: linear-gradient(135deg,#6b7280,#4b5563); }
+    .progress-rail{ height:10px; background:#e5e7eb; border-radius:999px; overflow:hidden; }
+    .progress-fill{ height:100%; background: linear-gradient(90deg,#34d399,#10b981); transition: width .25s ease; }
+  </style>
 </head>
-<body>
-<div class="container">
 
-  <div class="header">
-    <div class="brand">
-      <div class="institute">Instituto Impulso Coaching de Liderança</div>
-      <div class="tag">Tempo médio: ~8 minutos • 40 itens • Resultado imediato</div>
-    </div>
-    <h1>Avaliação de Auto-Estima Saudável</h1>
-    <p class="sub">Ferramenta cientificamente inspirada em modelos validados para mensurar seu Índice Global de Autoestima (IGA) — parte essencial da Inteligência Emocional Saudável.</p>
-    <div class="badges" aria-label="Bases teóricas citadas">
-      <div class="badge-item">Escala de Rosenberg</div>
-      <div class="badge-item">Inventário Coopersmith</div>
-      <div class="badge-item">Self-Compassion Scale (Neff)</div>
-      <div class="badge-item">IE de Goleman</div>
-      <div class="badge-item">Brené Brown</div>
-    </div>
-  </div>
+<body class="min-h-screen flex items-center justify-center p-4">
+  <div class="max-w-3xl w-full card-soft rounded-2xl p-6 md:p-8">
 
-  <div class="grid">
-    <div class="card" id="cardStart">
-      <div class="card-inner">
-        <h2 class="section-title">Informações do Participante</h2>
-
-        <div class="form">
-          <div class="form-group">
-            <label for="name">NOME COMPLETO *</label>
-            <input id="name" autocomplete="name" placeholder="Digite seu nome completo"/>
-          </div>
-          <div class="form-group">
-            <label for="email">E-MAIL *</label>
-            <input id="email" autocomplete="email" placeholder="nome@exemplo.com"/>
-          </div>
-        </div>
-
-        <div class="btn-row">
-          <button class="btn-primary" id="btnStart">Iniciar Avaliação Agora</button>
-          <button class="btn-secondary" id="btnLoad">Carregar Progresso</button>
-          <button class="btn-outline" id="btnReset">Limpar</button>
-        </div>
-
-        <div class="footer-note">
-          Observação: este instrumento é educativo e de desenvolvimento pessoal. Se você estiver em sofrimento emocional significativo, considere buscar apoio profissional qualificado.
-        </div>
+    <div class="text-center">
+      <div class="text-2xl md:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-700 to-green-600">
+        Instituto Impulso Coaching de Liderança
       </div>
+      <div class="mt-1 text-sm md:text-base text-emerald-900/70 font-semibold">
+        A mudança pode acontecer em um instante.
+      </div>
+
+      <h1 class="mt-4 text-3xl md:text-4xl font-extrabold text-gray-900">
+        Avaliação de Autoestima Saudável
+      </h1>
+      <p class="mt-2 text-gray-600 text-sm md:text-base">
+        40 afirmações • escala 1–5 • resultado imediato
+      </p>
     </div>
 
-    <div class="card" id="cardInfo">
-      <div class="card-inner">
-        <h2 class="section-title">Como responder</h2>
-        <p class="small">
-          Leia cada afirmação e escolha a opção que melhor descreve como você tem se sentido na maior parte do tempo.
-          Responda com sinceridade — não existe “certo ou errado”.
-        </p>
-        <div class="hr"></div>
-        <p class="small">
-          Escala (1 a 5): 1 = Discordo totalmente • 5 = Concordo totalmente.
+    <!-- INTRO SIMPLES -->
+    <div id="intro" class="mt-6">
+      <div class="bg-white/70 border border-emerald-100 rounded-xl p-4">
+        <p class="text-sm font-extrabold text-gray-800 mb-3">Dados do participante</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <input id="name" type="text" placeholder="Nome *"
+            class="border border-emerald-200 rounded-xl p-3 w-full focus:outline-none focus:ring-2 focus:ring-emerald-300 bg-white" />
+          <input id="email" type="email" placeholder="Email *"
+            class="border border-emerald-200 rounded-xl p-3 w-full focus:outline-none focus:ring-2 focus:ring-emerald-300 bg-white" />
+        </div>
+
+        <div class="flex justify-end mt-4">
+          <button onclick="startTest()" class="btn-primary text-emerald-950 px-5 py-2.5 rounded-xl shadow-sm font-extrabold">
+            Iniciar
+          </button>
+        </div>
+
+        <p class="mt-3 text-xs text-gray-500">
+          Observação: ferramenta educativa de desenvolvimento pessoal. Se houver sofrimento emocional intenso, considere apoio profissional qualificado.
         </p>
       </div>
     </div>
-  </div>
 
-  <div class="card hidden" id="cardQuiz" style="margin-top:16px">
-    <div class="card-inner">
-
-      <div class="progress">
-        <div class="progress-label" id="progressLabel">Dimensão 1 de 5</div>
-        <div class="progress-pct" id="progressPct">20%</div>
-      </div>
-      <div class="progress-bar" aria-label="Progresso">
-        <div class="progress-fill" id="progressFill"></div>
-      </div>
-
-      <div class="dim-head" style="margin-top:14px">
-        <div>
-          <div class="dim-tag" id="dimTag">Dimensão 1 de 5 • 💎</div>
-          <h2 class="dim-title" id="dimTitle">—</h2>
-          <p class="dim-desc" id="dimDesc">—</p>
-        </div>
-      </div>
-
-      <div class="q-list" id="qList"></div>
-
-      <div class="btn-row" style="margin-top:14px">
-        <button class="btn-secondary" id="btnPrev">◀ Anterior</button>
-        <button class="btn-primary" id="btnNext">Próximo ▶</button>
-        <button class="btn-outline" id="btnSave">Salvar Progresso</button>
-      </div>
-
-      <div class="small" id="saveHint" style="margin-top:10px"></div>
+    <!-- QUESTÕES (1 por tela) -->
+    <div id="test" class="hidden mt-6">
+      <div id="questionHost"></div>
     </div>
-  </div>
 
-  <div class="card hidden" id="cardResult" style="margin-top:16px">
-    <div class="card-inner">
-      <div class="result-top">
-        <h2 class="section-title" style="margin:0">Seu Resultado</h2>
-        <div class="res-participant" id="resParticipant">—</div>
-      </div>
+    <!-- RESULTADO (mantido simples) -->
+    <div id="result" class="hidden mt-6">
+      <div class="bg-white/70 border border-emerald-100 rounded-xl p-4">
+        <p class="text-sm font-extrabold text-gray-800">Resultado</p>
+        <p id="personalData" class="text-xs text-gray-600 mt-1"></p>
 
-      <div class="iga-wrap">
-        <div class="kpi">
-          <div class="kpi-label">Índice Global de Autoestima (IGA)</div>
-          <div class="kpi-value" id="igaPct">—%</div>
-          <div class="kpi-sub" id="igaSub">—</div>
-          <div style="margin-top:10px">
-            <span class="iga-badge" id="igaBadge">—</span>
+        <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div class="bg-white rounded-xl border border-gray-100 p-4">
+            <p class="text-xs font-extrabold text-gray-500">IGA</p>
+            <p id="igaPct" class="text-4xl font-extrabold text-emerald-700">—%</p>
+            <p id="igaLevel" class="text-xs text-gray-600 mt-1">—</p>
+          </div>
+          <div class="bg-white rounded-xl border border-gray-100 p-4 md:col-span-2">
+            <p class="text-xs font-extrabold text-gray-500">Perfil</p>
+            <p id="profileTitle" class="text-lg font-extrabold text-gray-900">—</p>
+            <p id="profileText" class="text-xs text-gray-700 mt-1">—</p>
           </div>
         </div>
 
-        <div class="profile">
-          <h3><span id="profileIcon">—</span> <span id="profileName">—</span></h3>
-          <p id="profileText">—</p>
+        <div class="mt-4 flex flex-col md:flex-row gap-2 justify-end">
+          <button onclick="generatePDF()" class="btn-primary text-emerald-950 px-5 py-2.5 rounded-xl shadow-sm font-extrabold">Salvar PDF</button>
+          <button onclick="saveOfflineHTML()" class="bg-white border border-emerald-200 text-emerald-900 px-5 py-2.5 rounded-xl shadow-sm font-extrabold">Salvar HTML</button>
+          <button onclick="restart()" class="btn-secondary text-white px-5 py-2.5 rounded-xl shadow-sm font-extrabold">Nova</button>
         </div>
       </div>
-
-      <div class="hr"></div>
-
-      <h3 class="section-title">Tabela Detalhada</h3>
-      <div class="table-wrap" role="region" aria-label="Tabela detalhada de resultados">
-        <table>
-          <thead>
-            <tr>
-              <th>Dimensão</th><th>Pts</th><th>%</th><th>Nível</th><th>Interpretação</th>
-            </tr>
-          </thead>
-          <tbody id="tblBody"></tbody>
-        </table>
-      </div>
-
-      <div class="hr"></div>
-
-      <div class="grid" style="grid-template-columns:1fr 1fr;gap:16px">
-        <div class="card" style="box-shadow:none">
-          <div class="card-inner">
-            <h3 class="section-title">Pontos Fortes</h3>
-            <div class="pills" id="strengths"></div>
-          </div>
-        </div>
-        <div class="card" style="box-shadow:none">
-          <div class="card-inner">
-            <h3 class="section-title">Áreas de Desenvolvimento</h3>
-            <div class="pills" id="devs"></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="hr"></div>
-
-      <h3 class="section-title">Recomendações Personalizadas</h3>
-      <div class="pills" id="recs"></div>
-
-      <div class="btn-row" style="margin-top:14px">
-        <button class="btn-secondary" id="btnPrint">💾 Salvar PDF (Imprimir)</button>
-        <button class="btn-secondary" id="btnEmail">📧 Copiar resumo para e-mail</button>
-        <button class="btn-outline" id="btnNew">🔄 Nova Avaliação</button>
-      </div>
-
-      <div class="footer-note" id="emailCopyHint"></div>
     </div>
-  </div>
 
-</div>
+  </div>
 
 <script>
-"use strict";
+  "use strict";
 
-/* ==========================
-   DADOS (5 dimensões / 40 itens)
-   ========================== */
-const DIMENSIONS = [
-  {
-    key:"d1",
-    icon:"💎",
-    title:"Autovalorização e Autoaceitação",
-    desc:"Mede o reconhecimento do seu valor pessoal e a capacidade de aceitar a si mesmo com autenticidade, incluindo falhas e limitações.",
-    items:[
+  // === DIMENSÕES E ITENS (mantém por trás, mas não exibe no questionário) ===
+  const DIMENSIONS = [
+    { key:"d1", items:[
       "Sinto que sou uma pessoa de valor, pelo menos tanto quanto outras pessoas.",
       "Consigo reconhecer qualidades em mim, mesmo quando erro.",
       "Aceito que tenho limitações sem me diminuir por isso.",
@@ -397,19 +138,8 @@ const DIMENSIONS = [
       "Eu me reconheço como alguém importante para mim mesmo(a).",
       "Eu me permito ser humano(a), sem me exigir perfeição.",
       "Eu consigo separar meu valor pessoal dos meus resultados."
-    ],
-    recs:[
-      "Pratique um diário de evidências: 3 atitudes suas por dia que demonstram valor (mesmo pequenas).",
-      "Treine a frase: “Eu posso melhorar sem me humilhar”.",
-      "Defina um limite saudável de autoexigência: 80% bem feito é melhor que 0% perfeito."
-    ]
-  },
-  {
-    key:"d2",
-    icon:"🚀",
-    title:"Autoconfiança e Competência Percebida",
-    desc:"Avalia quanto você confia na sua capacidade de agir, aprender e alcançar resultados, mesmo diante de desafios.",
-    items:[
+    ]},
+    { key:"d2", items:[
       "Eu confio que consigo aprender coisas novas quando necessário.",
       "Eu me considero capaz de lidar com problemas do dia a dia.",
       "Quando falho, consigo tentar de novo sem desistir de mim.",
@@ -418,19 +148,8 @@ const DIMENSIONS = [
       "Eu reconheço minhas conquistas sem minimizá-las.",
       "Eu consigo me posicionar quando preciso.",
       "Eu sinto que tenho recursos internos para enfrentar desafios."
-    ],
-    recs:[
-      "Liste 10 vitórias reais (pequenas e grandes) e releia quando a insegurança aparecer.",
-      "Use a regra do próximo passo: escolha uma ação pequena e executável em 15 minutos.",
-      "Transforme “não sei” em “ainda não aprendi”."
-    ]
-  },
-  {
-    key:"d3",
-    icon:"🧩",
-    title:"Autoimagem e Aceitação Social",
-    desc:"Explora como você se percebe, como lida com comparação e quanto se sente aceito(a) e pertencente.",
-    items:[
+    ]},
+    { key:"d3", items:[
       "Eu me sinto confortável em ser quem eu sou perto de outras pessoas.",
       "Eu não me comparo o tempo todo de forma que me faça mal.",
       "Eu consigo receber elogios sem desconfiar ou rejeitar.",
@@ -439,19 +158,8 @@ const DIMENSIONS = [
       "Eu não baseio meu valor apenas na opinião dos outros.",
       "Eu me sinto relativamente seguro(a) com minha imagem.",
       "Eu consigo estar em grupo sem me sentir inferior."
-    ],
-    recs:[
-      "Faça uma semana de “desintoxicação de comparação”: reduza gatilhos (redes/contas) que te fazem se diminuir.",
-      "Treine receber elogios com: “Obrigado(a), eu aceito”.",
-      "Reforce pertencimento: procure 1 ambiente onde você possa ser autêntico(a)."
-    ]
-  },
-  {
-    key:"d4",
-    icon:"💚",
-    title:"Autocompaixão e Diálogo Interno",
-    desc:"Mensura como você conversa consigo mesmo(a) e se você se apoia emocionalmente em vez de se punir.",
-    items:[
+    ]},
+    { key:"d4", items:[
       "Quando erro, eu evito me chamar de nomes ou me humilhar.",
       "Eu consigo me acolher quando estou triste ou frustrado(a).",
       "Eu falo comigo mesmo(a) como falaria com alguém que amo.",
@@ -460,19 +168,8 @@ const DIMENSIONS = [
       "Eu consigo ser firme comigo sem ser cruel.",
       "Eu noto quando meu crítico interno aparece e consigo ajustar o tom.",
       "Eu consigo me perdoar por escolhas do passado."
-    ],
-    recs:[
-      "Nomeie o crítico interno e responda com um ‘mentor interno’ (tom firme e gentil).",
-      "Use a pergunta: “O que eu preciso agora para me regular?”",
-      "Faça 2 minutos/dia de respiração 4-6 (inspira 4, expira 6) para reduzir autocobrança."
-    ]
-  },
-  {
-    key:"d5",
-    icon:"🛡️",
-    title:"Estabilidade Emocional e Resiliência",
-    desc:"Avalia como você lida com emoções, estresse e recuperação após situações difíceis.",
-    items:[
+    ]},
+    { key:"d5", items:[
       "Eu consigo me acalmar depois de situações estressantes.",
       "Eu não fico preso(a) por muito tempo em pensamentos autodepreciativos.",
       "Eu consigo pedir ajuda quando preciso.",
@@ -481,364 +178,294 @@ const DIMENSIONS = [
       "Eu consigo manter esperança mesmo em fases difíceis.",
       "Eu reconheço minhas emoções sem ser dominado(a) por elas.",
       "Eu aprendo com dificuldades ao invés de me definir por elas."
-    ],
-    recs:[
-      "Crie um plano de regulação: sono, movimento, alimentação e pausas (mínimo viável).",
-      "Quando vier a emoção forte, use: Nomear → Normalizar → Necessidade → Próxima ação.",
-      "Estabeleça uma rede: 2 pessoas para apoio emocional e 2 para apoio prático."
-    ]
-  }
-];
+    ]}
+  ];
 
-const LIKERT = [
-  {v:1, label:"Discordo Totalmente"},
-  {v:2, label:"Discordo"},
-  {v:3, label:"Neutro"},
-  {v:4, label:"Concordo"},
-  {v:5, label:"Concordo Totalmente"}
-];
+  const LIKERT = [
+    {v:1, label:"Discordo totalmente"},
+    {v:2, label:"Discordo"},
+    {v:3, label:"Neutro"},
+    {v:4, label:"Concordo"},
+    {v:5, label:"Concordo totalmente"}
+  ];
 
-/* ==========================
-   ESTADO
-   ========================== */
-const state = {
-  name:"",
-  email:"",
-  dimIndex:0,
-  // respostas por dimensão: array de 8 números (1-5)
-  answers: DIMENSIONS.map(d => Array(d.items.length).fill(null))
-};
-
-const STORAGE_KEY = "impulso_autoestima_v1";
-
-/* ==========================
-   UTIL
-   ========================== */
-function el(id){ return document.getElementById(id); }
-function todayBR(){
-  const d = new Date();
-  return d.toLocaleDateString("pt-BR",{year:"numeric",month:"2-digit",day:"2-digit"});
-}
-function clamp(n,min,max){ return Math.max(min,Math.min(max,n)); }
-function pct(n){ return Math.round(n); }
-function dimScore(dimIdx){
-  const arr = state.answers[dimIdx];
-  const answered = arr.filter(x => typeof x === "number").length;
-  const pts = arr.reduce((s,x)=> s + (typeof x==="number"? x : 0), 0);
-  const max = DIMENSIONS[dimIdx].items.length * 5;
-  const min = DIMENSIONS[dimIdx].items.length * 1;
-  const pctVal = answered===DIMENSIONS[dimIdx].items.length ? (pts / max) * 100 : null;
-  return {answered, pts, max, min, pct:pctVal};
-}
-function igaScore(){
-  const all = state.answers.flat();
-  const answered = all.filter(x => typeof x === "number").length;
-  const pts = all.reduce((s,x)=> s + (typeof x==="number"? x : 0), 0);
-  const max = all.length * 5;
-  const pctVal = answered===all.length ? (pts / max) * 100 : null;
-  return {answered, pts, max, pct:pctVal};
-}
-function levelFromPct(p){
-  if (p < 35) return {lvl:"Muito Baixo", color:"var(--danger)"};
-  if (p < 55) return {lvl:"Baixo", color:"var(--warn)"};
-  if (p < 70) return {lvl:"Moderado", color:"var(--accent2)"};
-  if (p < 85) return {lvl:"Bom", color:"var(--ok)"};
-  return {lvl:"Excelente", color:"var(--accent2)"};
-}
-function profileFromIGA(p){
-  // perfis exemplificativos (inclui o citado no seu conteúdo)
-  if (p < 35) return {
-    icon:"🔴",
-    name:"O Crítico Interno",
-    text:"Você tende a ter uma voz interna muito exigente e punitiva. Sua autoestima está em um nível que gera sofrimento emocional significativo. Você pode se sentir indigno(a), inferior ou em dívida consigo. Este é um excelente ponto de partida para uma jornada de transformação necessária."
-  };
-  if (p < 55) return {
-    icon:"🟠",
-    name:"O Comparador Inseguro",
-    text:"Sua autoestima oscila e é sensível a críticas, comparação e desempenho. Em dias bons, você se sente ok; em dias difíceis, a autoconfiança cai rápido. O foco aqui é construir base interna e consistência emocional."
-  };
-  if (p < 70) return {
-    icon:"🟡",
-    name:"O Realista em Construção",
-    text:"Você tem recursos importantes, mas ainda alterna entre autoconfiança e autocrítica. Com ajustes no diálogo interno e fortalecimento de competências emocionais, seu IGA pode subir com relativa rapidez."
-  };
-  if (p < 85) return {
-    icon:"🟢",
-    name:"O Confiante Equilibrado",
-    text:"Você se valoriza e tende a se recuperar bem de desafios. Ainda há pontos pontuais de evolução, mas seu padrão geral é saudável e consistente."
-  };
-  return {
-    icon:"🟣",
-    name:"O Autolíder",
-    text:"Sua autoestima é estável e bem integrada. Você se aceita, confia na sua capacidade e se regula emocionalmente com maturidade. O próximo nível é manter consistência e usar isso para liderar com presença."
-  };
-}
-
-/* ==========================
-   RENDER
-   ========================== */
-function show(id){
-  ["cardStart","cardInfo","cardQuiz","cardResult"].forEach(x=>el(x).classList.add("hidden"));
-  el(id).classList.remove("hidden");
-}
-
-function renderDimension(){
-  const i = state.dimIndex;
-  const dim = DIMENSIONS[i];
-
-  el("progressLabel").textContent = `Dimensão ${i+1} de ${DIMENSIONS.length}`;
-  const progress = ((i+1)/DIMENSIONS.length)*100;
-  el("progressPct").textContent = `${pct(progress)}%`;
-  el("progressFill").style.width = `${progress}%`;
-
-  el("dimTag").textContent = `Dimensão ${i+1} de ${DIMENSIONS.length} • ${dim.icon}`;
-  el("dimTitle").textContent = dim.title;
-  el("dimDesc").textContent = dim.desc;
-
-  const qList = el("qList");
-  qList.innerHTML = "";
-
-  dim.items.forEach((txt, qIdx) => {
-    const card = document.createElement("div");
-    card.className = "question-card";
-
-    const p = document.createElement("p");
-    p.className = "q-text";
-    p.innerHTML = `<span class="q-num">${qIdx+1}.</span>${escapeHtml(txt)}`;
-    card.appendChild(p);
-
-    const lk = document.createElement("div");
-    lk.className = "likert";
-
-    LIKERT.forEach(opt => {
-      const b = document.createElement("button");
-      b.type="button";
-      b.className="lk-btn";
-      b.innerHTML = `<strong>${opt.v}</strong><span>${escapeHtml(opt.label)}</span>`;
-      const current = state.answers[i][qIdx];
-      if (current === opt.v) b.classList.add("active");
-      b.addEventListener("click", () => {
-        state.answers[i][qIdx] = opt.v;
-        renderDimension();
-      });
-      lk.appendChild(b);
+  // Monta lista de perguntas (misturadas) mantendo referência da dimensão
+  function buildQuestionsShuffled(){
+    const arr = [];
+    DIMENSIONS.forEach((d, di) => {
+      d.items.forEach((text, qi) => arr.push({ di, qi, text }));
     });
 
-    card.appendChild(lk);
-    qList.appendChild(card);
-  });
-
-  el("btnPrev").disabled = (i===0);
-  el("btnNext").textContent = (i===DIMENSIONS.length-1) ? "✅ Ver Meus Resultados" : "Próximo ▶";
-  el("saveHint").textContent = progressText();
-}
-
-function progressText(){
-  const all = state.answers.flat();
-  const answered = all.filter(x => typeof x === "number").length;
-  return `Progresso: ${answered}/${all.length} respostas preenchidas.`;
-}
-
-function renderResults(){
-  const iga = igaScore();
-  if (iga.pct === null){
-    alert("Por favor, responda todas as perguntas antes de ver os resultados.");
-    return;
-  }
-
-  const name = state.name.trim();
-  const email = state.email.trim();
-  el("resParticipant").innerHTML = `👤 <strong>${escapeHtml(name)}</strong> &nbsp;|&nbsp; 📅 ${todayBR()} &nbsp;|&nbsp; ✉️ ${escapeHtml(email)}`;
-
-  const igaP = clamp(iga.pct,0,100);
-  const lvl = levelFromPct(igaP);
-  el("igaPct").textContent = `${pct(igaP)}%`;
-  el("igaSub").textContent = `Pontuação: ${iga.pts}/${iga.max} • Nível: ${lvl.lvl}`;
-  el("igaBadge").textContent = `IGA • ${lvl.lvl}`;
-  el("igaBadge").style.borderColor = lvl.color;
-
-  const prof = profileFromIGA(igaP);
-  el("profileIcon").textContent = prof.icon;
-  el("profileName").textContent = prof.name;
-  el("profileText").textContent = prof.text;
-
-  // tabela por dimensão
-  const tb = el("tblBody");
-  tb.innerHTML = "";
-  const dimRows = DIMENSIONS.map((d, idx) => {
-    const s = dimScore(idx);
-    const p = (s.pct===null) ? 0 : s.pct;
-    const lv = levelFromPct(p);
-    return {idx, title:d.title, pts:s.pts, max:s.max, pct:p, lvl:lv.lvl, interp:interpretDim(p)};
-  });
-
-  dimRows.forEach(r=>{
-    const tr = document.createElement("tr");
-    tr.innerHTML = `<td>${escapeHtml(r.title)}</td><td>${r.pts}/${r.max}</td><td>${pct(r.pct)}%</td><td>${escapeHtml(r.lvl)}</td><td>${escapeHtml(r.interp)}</td>`;
-    tb.appendChild(tr);
-  });
-
-  // pontos fortes e desenvolvimento (top2 / bottom2)
-  const sorted = [...dimRows].sort((a,b)=> b.pct - a.pct);
-  const top2 = sorted.slice(0,2);
-  const bot2 = sorted.slice(-2).reverse();
-
-  el("strengths").innerHTML = "";
-  top2.forEach(r=>{
-    el("strengths").appendChild(pill("✅ "+r.title, `Você pontuou ${pct(r.pct)}%. Mantenha práticas que sustentam este eixo.`));
-  });
-
-  el("devs").innerHTML = "";
-  bot2.forEach(r=>{
-    el("devs").appendChild(pill("🎯 "+r.title, `Você pontuou ${pct(r.pct)}%. Aqui estão as alavancas mais rápidas para elevar seu IGA.`));
-  });
-
-  // recomendações: para dimensões abaixo de 70%, puxar recs; senão, reforço
-  el("recs").innerHTML = "";
-  dimRows.forEach(r=>{
-    const dim = DIMENSIONS[r.idx];
-    const header = `${dim.title} — ${pct(r.pct)}%`;
-    if (r.pct < 70){
-      const text = dim.recs.map(x=>"• "+x).join(" ");
-      el("recs").appendChild(pill(header, text));
-    } else {
-      el("recs").appendChild(pill(header, "• Continue reforçando hábitos e ambientes que sustentam esse resultado. • Ensine/compartilhe o que funciona: isso consolida o padrão interno."));
+    // Fisher-Yates shuffle
+    for (let i = arr.length - 1; i > 0; i--){
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
     }
-  });
-
-  el("emailCopyHint").textContent = "";
-}
-
-function pill(title, text){
-  const div = document.createElement("div");
-  div.className="pill";
-  const b = document.createElement("b");
-  b.textContent = title;
-  const span = document.createElement("span");
-  span.textContent = text;
-  div.appendChild(b);
-  div.appendChild(span);
-  return div;
-}
-
-function interpretDim(p){
-  if (p < 35) return "Indicador crítico: alta autocrítica e baixa base interna. Requer atenção e apoio.";
-  if (p < 55) return "Base instável: sensível a estresse, comparação e validação externa.";
-  if (p < 70) return "Em construção: recursos presentes, mas ainda inconsistentes em pressão.";
-  if (p < 85) return "Saudável: boa base interna, com pontos pontuais a refinar.";
-  return "Muito saudável: forte consistência, autorregulação e autoliderança.";
-}
-
-function escapeHtml(s){
-  return String(s)
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
-}
-
-/* ==========================
-   EVENTOS
-   ========================== */
-el("btnStart").addEventListener("click", () => {
-  const name = el("name").value.trim();
-  const email = el("email").value.trim();
-  if (!name || !email){
-    alert("Preencha Nome e E-mail para iniciar.");
-    return;
+    return arr;
   }
-  state.name = name;
-  state.email = email;
-  state.dimIndex = 0;
-  show("cardQuiz");
-  renderDimension();
-});
 
-el("btnPrev").addEventListener("click", () => {
-  state.dimIndex = Math.max(0, state.dimIndex - 1);
-  renderDimension();
-});
+  // Estado
+  let user = { name:"", email:"" };
+  let questions = [];
+  let current = 0;
+  let responses = []; // por índice da questão embaralhada: 1..5
 
-el("btnNext").addEventListener("click", () => {
-  if (state.dimIndex < DIMENSIONS.length - 1){
-    state.dimIndex += 1;
-    renderDimension();
-    return;
+  function sanitize(s){ return DOMPurify.sanitize(String(s || "")); }
+  function validateEmail(email){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
+
+  function startTest(){
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+
+    if(!name || !email || !validateEmail(email)){
+      alert("Preencha Nome e Email corretamente.");
+      return;
+    }
+
+    user = { name, email };
+    questions = buildQuestionsShuffled();
+    responses = new Array(questions.length).fill(null);
+    current = 0;
+
+    document.getElementById("intro").classList.add("hidden");
+    document.getElementById("test").classList.remove("hidden");
+    renderQuestion();
   }
-  // última dimensão -> resultados
-  show("cardResult");
-  renderResults();
-});
 
-el("btnSave").addEventListener("click", () => {
-  const payload = {
-    name: el("name").value.trim() || state.name,
-    email: el("email").value.trim() || state.email,
-    dimIndex: state.dimIndex,
-    answers: state.answers
-  };
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
-  el("saveHint").textContent = "Progresso salvo neste navegador.";
-});
+  function renderQuestion(){
+    const total = questions.length;
+    const qNum = current + 1;
+    const progress = Math.round(((qNum - 1) / total) * 100);
 
-el("btnLoad").addEventListener("click", () => {
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw){ alert("Nenhum progresso salvo encontrado."); return; }
-  const data = JSON.parse(raw);
-  state.name = data.name || "";
-  state.email = data.email || "";
-  state.dimIndex = Number.isFinite(data.dimIndex) ? data.dimIndex : 0;
-  state.answers = Array.isArray(data.answers) ? data.answers : state.answers;
+    const q = questions[current];
 
-  el("name").value = state.name;
-  el("email").value = state.email;
+    const html = `
+      <div class="bg-white/70 border border-emerald-100 rounded-xl p-4">
+        <div class="mb-3">
+          <div class="flex items-center justify-between gap-2">
+            <p class="text-xs font-extrabold text-gray-600">Progresso</p>
+            <p class="text-xs font-extrabold text-gray-600">${qNum}/${total}</p>
+          </div>
+          <div class="progress-rail mt-2">
+            <div class="progress-fill" style="width:${progress}%"></div>
+          </div>
+        </div>
 
-  show("cardQuiz");
-  renderDimension();
-});
+        <p class="text-2xl md:text-3xl font-extrabold text-center text-gray-900 leading-snug">
+          "${sanitize(q.text)}"
+        </p>
 
-el("btnReset").addEventListener("click", () => {
-  el("name").value = "";
-  el("email").value = "";
-  state.name=""; state.email=""; state.dimIndex=0;
-  state.answers = DIMENSIONS.map(d => Array(d.items.length).fill(null));
-  localStorage.removeItem(STORAGE_KEY);
-  alert("Dados limpos.");
-});
+        <div class="grid grid-cols-5 gap-2 mt-5">
+          ${LIKERT.map(opt => `
+            <div class="scale-option ${responses[current]===opt.v?'selected':''}" data-value="${opt.v}" onclick="selectAnswer(${opt.v})">
+              ${opt.v}<br><small class="text-[10px] font-semibold">${sanitize(opt.label)}</small>
+            </div>
+          `).join("")}
+        </div>
 
-el("btnPrint").addEventListener("click", () => window.print());
+        <div class="flex flex-col md:flex-row items-center justify-center gap-2 mt-5">
+          <button onclick="prev()" class="px-5 py-2.5 rounded-xl font-extrabold border border-gray-200 bg-white text-gray-700 ${current===0?'opacity-40 cursor-not-allowed':''}" ${current===0?'disabled':''}>
+            Anterior
+          </button>
 
-el("btnEmail").addEventListener("click", async () => {
-  const iga = igaScore();
-  if (iga.pct === null) return;
+          ${current < total-1
+            ? `<button onclick="next()" class="btn-primary text-emerald-950 px-6 py-2.5 rounded-xl shadow-sm font-extrabold ${responses[current]===null?'opacity-50 cursor-not-allowed':''}">
+                Próxima
+              </button>`
+            : `<button onclick="finish()" class="btn-primary text-emerald-950 px-6 py-2.5 rounded-xl shadow-sm font-extrabold ${responses[current]===null?'opacity-50 cursor-not-allowed':''}">
+                Ver resultado
+              </button>`
+          }
+        </div>
+      </div>
+    `;
 
-  const lines = [];
-  lines.push("Resultado — Avaliação de Auto-Estima Saudável");
-  lines.push(`Participante: ${state.name} | ${state.email} | Data: ${todayBR()}`);
-  lines.push(`IGA: ${pct(iga.pct)}% (${iga.pts}/${iga.max})`);
-  lines.push("");
-  DIMENSIONS.forEach((d, i) => {
-    const s = dimScore(i);
-    const p = (s.pct===null)?0:s.pct;
-    lines.push(`${d.title}: ${pct(p)}% (${s.pts}/${s.max})`);
-  });
-
-  const text = lines.join("\n");
-  try{
-    await navigator.clipboard.writeText(text);
-    el("emailCopyHint").textContent = "Resumo copiado para a área de transferência. Cole no seu e-mail.";
-  }catch(e){
-    el("emailCopyHint").textContent = "Não foi possível copiar automaticamente. Selecione e copie manualmente no console (F12) ou tente outro navegador.";
+    document.getElementById("questionHost").innerHTML = html;
   }
-});
 
-el("btnNew").addEventListener("click", () => {
-  state.dimIndex = 0;
-  state.answers = DIMENSIONS.map(d => Array(d.items.length).fill(null));
-  show("cardStart");
-});
+  function selectAnswer(v){
+    responses[current] = v;
+    renderQuestion();
+  }
 
+  function next(){
+    if(responses[current] === null){
+      alert("Selecione uma opção antes de continuar.");
+      return;
+    }
+    current++;
+    renderQuestion();
+  }
+
+  function prev(){
+    if(current===0) return;
+    current--;
+    renderQuestion();
+  }
+
+  function pct(n){ return Math.max(0, Math.min(100, Math.round(n))); }
+
+  function score(){
+    // soma por dimensão a partir das questões embaralhadas
+    const sums = DIMENSIONS.map(()=>0);
+    const maxPerDim = 8 * 5;
+
+    for(let i=0;i<questions.length;i++){
+      const { di } = questions[i];
+      sums[di] += responses[i];
+    }
+
+    const pctByDim = sums.map(s => (s / maxPerDim) * 100);
+    const iga = pctByDim.reduce((a,b)=>a+b,0) / pctByDim.length;
+
+    return { sums, pctByDim, iga };
+  }
+
+  function igaLevel(igaPct){
+    if(igaPct < 35) return "Muito baixo";
+    if(igaPct < 55) return "Baixo";
+    if(igaPct < 70) return "Moderado";
+    if(igaPct < 85) return "Bom";
+    return "Excelente";
+  }
+
+  function igaProfile(igaPct){
+    if(igaPct < 35) return { title:"🔴 O Crítico Interno", text:"Alta autocrítica e base interna fragilizada. O foco é reduzir punição interna e construir autoaceitação." };
+    if(igaPct < 55) return { title:"🟠 O Comparador Inseguro", text:"Oscilações e sensibilidade à validação externa. O foco é consistência emocional e autoconfiança." };
+    if(igaPct < 70) return { title:"🟡 O Realista em Construção", text:"Recursos presentes, mas inconsistentes sob pressão. Ajustes no diálogo interno ajudam muito." };
+    if(igaPct < 85) return { title:"🟢 O Confiante Equilibrado", text:"Boa base interna e recuperação emocional. Refinar pontos específicos eleva o resultado." };
+    return { title:"🟣 O Autolíder", text:"Autoestima estável e autoliderança. Manter consistência e usar isso em relações e liderança." };
+  }
+
+  function finish(){
+    if(responses[current] === null){
+      alert("Selecione uma opção antes de continuar.");
+      return;
+    }
+    if(responses.some(r => r === null)){
+      alert("Responda todas as perguntas.");
+      return;
+    }
+
+    const s = score();
+    const igaPct = pct(s.iga);
+    const level = igaLevel(igaPct);
+    const profile = igaProfile(igaPct);
+
+    document.getElementById("test").classList.add("hidden");
+    document.getElementById("result").classList.remove("hidden");
+
+    document.getElementById("personalData").innerHTML =
+      `<span class="font-bold">Nome:</span> ${sanitize(user.name)} | <span class="font-bold">Email:</span> ${sanitize(user.email)}`;
+
+    document.getElementById("igaPct").textContent = `${igaPct}%`;
+    document.getElementById("igaLevel").textContent = `Nível: ${level}`;
+    document.getElementById("profileTitle").textContent = profile.title;
+    document.getElementById("profileText").textContent = profile.text;
+
+    window._igaData = { user, igaPct, level, profile, pctByDim: s.pctByDim };
+  }
+
+  async function generatePDF(){
+    try{
+      const data = window._igaData;
+      if(!data){ alert("Gere o resultado antes de salvar PDF."); return; }
+
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ format:"a4" });
+
+      doc.setFillColor(240, 253, 244);
+      doc.rect(0,0,210,297,"F");
+
+      doc.setFont("helvetica","bold");
+      doc.setFontSize(18);
+      doc.setTextColor(20,83,45);
+      doc.text("Avaliação de Autoestima Saudável (IGA)", 105, 18, { align:"center" });
+
+      doc.setFont("helvetica","normal");
+      doc.setFontSize(10);
+      doc.setTextColor(31,41,55);
+
+      const header = `Nome: ${data.user.name} | Email: ${data.user.email} | Data: ${new Date().toLocaleDateString("pt-BR")}`;
+      doc.text(doc.splitTextToSize(header, 180), 15, 30);
+
+      doc.setFont("helvetica","bold");
+      doc.setFontSize(14);
+      doc.text(`IGA: ${data.igaPct}% — ${data.level}`, 15, 46);
+
+      doc.setFont("helvetica","bold");
+      doc.setFontSize(12);
+      doc.text(`Perfil: ${data.profile.title}`, 15, 56);
+
+      doc.setFont("helvetica","normal");
+      doc.setFontSize(10);
+      doc.text(doc.splitTextToSize(`Interpretação: ${data.profile.text}`, 180), 15, 64);
+
+      const pdfName = `Autoestima_IGA_${sanitize(data.user.name).replace(/\s+/g,"_")}.pdf`;
+      doc.save(pdfName);
+    }catch(e){
+      console.error(e);
+      alert("Erro ao gerar PDF.");
+    }
+  }
+
+  function saveOfflineHTML(){
+    const data = window._igaData;
+    if(!data){ alert("Gere o resultado antes de salvar HTML."); return; }
+
+    const resultClone = document.querySelector("#result").cloneNode(true);
+
+    const styleContent = `
+      <style>
+        body{ font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial; background:#fff; margin:0; padding:20px; }
+        .container{ max-width: 920px; margin:0 auto; }
+      </style>
+      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+    `;
+
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html lang="pt-BR">
+      <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Resultado IGA — ${sanitize(data.user.name)}</title>
+        ${styleContent}
+      </head>
+      <body>
+        <div class="container">
+          ${resultClone.outerHTML}
+        </div>
+      </body>
+      </html>
+    `;
+
+    const blob = new Blob([htmlContent], { type:"text/html;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `Resultado_IGA_${sanitize(data.user.name).replace(/\s+/g,"_")}.html`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+
+    URL.revokeObjectURL(url);
+  }
+
+  function restart(){
+    questions = [];
+    responses = [];
+    current = 0;
+    window._igaData = null;
+
+    document.getElementById("result").classList.add("hidden");
+    document.getElementById("test").classList.add("hidden");
+    document.getElementById("intro").classList.remove("hidden");
+
+    document.getElementById("name").value = "";
+    document.getElementById("email").value = "";
+  }
 </script>
 </body>
 </html>

@@ -3,47 +3,52 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Avaliação de Autoestima Saudável — Instituto Impulso</title>
+  <title>Avaliação Nível de Autoestima — Instituto Impulso</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.4.0/purify.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+
   <style>
     body{
-      background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+      background: linear-gradient(135deg, #f6fdf8, #e9fbf0);
       font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial;
     }
     .card-soft{
-      background: rgba(255,255,255,.86);
-      border: 1px solid rgba(16,185,129,.18);
-      box-shadow: 0 18px 50px rgba(2,6,23,.08);
+      background: rgba(255,255,255,.88);
+      border: 1px solid rgba(16,185,129,.14);
+      box-shadow: 0 18px 50px rgba(2,6,23,.07);
       backdrop-filter: blur(10px);
     }
     .scale-option{
-      transition: all .16s ease;
+      transition: all .14s ease;
       border: 2px solid #d1d5db;
       border-radius: 12px;
       padding: 10px 8px;
       text-align: center;
       cursor: pointer;
       background: linear-gradient(135deg,#ffffff,#f7fee7);
-      font-weight: 800;
+      font-weight: 700;
       user-select:none;
     }
-    .scale-option:hover{ background:#ecfccb; border-color:#34d399; }
-    .scale-option:active{ transform: scale(1.05); }
+    .scale-option:hover{ background:#f0fdf4; border-color:#34d399; }
+    .scale-option:active{ transform: scale(1.04); }
     .scale-option.selected{
       background: linear-gradient(135deg,#34d399,#10b981);
       color:#064e3b;
       border-color:#10b981;
     }
     .btn-primary{ background: linear-gradient(135deg,#34d399,#10b981); transition: transform .1s ease; }
-    .btn-primary:active{ transform: scale(1.03); }
+    .btn-primary:active{ transform: scale(1.02); }
     .btn-secondary{ background: linear-gradient(135deg,#6b7280,#4b5563); }
     .progress-rail{ height:10px; background:#e5e7eb; border-radius:999px; overflow:hidden; }
     .progress-fill{ height:100%; background: linear-gradient(90deg,#34d399,#10b981); transition: width .25s ease; }
+
+    #themesChart{ max-width: 920px !important; height: 360px !important; margin: 0 auto; }
   </style>
 </head>
 
@@ -59,7 +64,7 @@
       </div>
 
       <h1 class="mt-4 text-3xl md:text-4xl font-extrabold text-gray-900">
-        Avaliação de Autoestima Saudável
+        Avaliação Nível de Autoestima
       </h1>
       <p class="mt-2 text-gray-600 text-sm md:text-base">
         40 afirmações • escala 1–5 • resultado imediato
@@ -95,7 +100,7 @@
       <div id="questionHost"></div>
     </div>
 
-    <!-- RESULTADO (mantido simples) -->
+    <!-- RESULTADO -->
     <div id="result" class="hidden mt-6">
       <div class="bg-white/70 border border-emerald-100 rounded-xl p-4">
         <p class="text-sm font-extrabold text-gray-800">Resultado</p>
@@ -114,358 +119,664 @@
           </div>
         </div>
 
+        <!-- ALERTAS -->
+        <div id="alerts" class="mt-4 hidden"></div>
+
+        <!-- GRÁFICO POR TEMAS -->
+        <div class="mt-4 bg-white rounded-xl border border-gray-100 p-4">
+          <p class="text-xs font-extrabold text-gray-500 mb-2">Gráfico por temas (módulos)</p>
+          <canvas id="themesChart"></canvas>
+          <p class="text-[11px] text-gray-500 mt-2">
+            Referência: mínimo saudável = <span class="font-bold" id="minHealthyLabel">—</span>.
+          </p>
+        </div>
+
+        <!-- EXPLICAÇÃO DETALHADA -->
+        <div class="mt-4 bg-white rounded-xl border border-gray-100 p-4">
+          <p class="text-xs font-extrabold text-gray-500 mb-2">Explicação detalhada por módulo</p>
+          <div id="moduleExplain" class="space-y-3"></div>
+        </div>
+
         <div class="mt-4 flex flex-col md:flex-row gap-2 justify-end">
           <button onclick="generatePDF()" class="btn-primary text-emerald-950 px-5 py-2.5 rounded-xl shadow-sm font-extrabold">Salvar PDF</button>
           <button onclick="saveOfflineHTML()" class="bg-white border border-emerald-200 text-emerald-900 px-5 py-2.5 rounded-xl shadow-sm font-extrabold">Salvar HTML</button>
           <button onclick="restart()" class="btn-secondary text-white px-5 py-2.5 rounded-xl shadow-sm font-extrabold">Nova</button>
         </div>
+
+        <p class="mt-3 text-[11px] text-gray-500" id="autoActionsHint"></p>
       </div>
     </div>
 
   </div>
 
 <script>
-  "use strict";
+"use strict";
 
-  // === DIMENSÕES E ITENS (mantém por trás, mas não exibe no questionário) ===
-  const DIMENSIONS = [
-    { key:"d1", items:[
-      "Sinto que sou uma pessoa de valor, pelo menos tanto quanto outras pessoas.",
-      "Consigo reconhecer qualidades em mim, mesmo quando erro.",
-      "Aceito que tenho limitações sem me diminuir por isso.",
-      "Consigo me tratar com respeito, mesmo em dias difíceis.",
-      "Eu me sinto digno(a) de amor e consideração.",
-      "Eu me reconheço como alguém importante para mim mesmo(a).",
-      "Eu me permito ser humano(a), sem me exigir perfeição.",
-      "Eu consigo separar meu valor pessoal dos meus resultados."
-    ]},
-    { key:"d2", items:[
-      "Eu confio que consigo aprender coisas novas quando necessário.",
-      "Eu me considero capaz de lidar com problemas do dia a dia.",
-      "Quando falho, consigo tentar de novo sem desistir de mim.",
-      "Eu me sinto competente naquilo que faço na maior parte do tempo.",
-      "Eu tomo decisões com razoável segurança.",
-      "Eu reconheço minhas conquistas sem minimizá-las.",
-      "Eu consigo me posicionar quando preciso.",
-      "Eu sinto que tenho recursos internos para enfrentar desafios."
-    ]},
-    { key:"d3", items:[
-      "Eu me sinto confortável em ser quem eu sou perto de outras pessoas.",
-      "Eu não me comparo o tempo todo de forma que me faça mal.",
-      "Eu consigo receber elogios sem desconfiar ou rejeitar.",
-      "Eu me sinto pertencente em ambientes sociais importantes para mim.",
-      "Eu consigo dizer “não” sem medo excessivo de rejeição.",
-      "Eu não baseio meu valor apenas na opinião dos outros.",
-      "Eu me sinto relativamente seguro(a) com minha imagem.",
-      "Eu consigo estar em grupo sem me sentir inferior."
-    ]},
-    { key:"d4", items:[
-      "Quando erro, eu evito me chamar de nomes ou me humilhar.",
-      "Eu consigo me acolher quando estou triste ou frustrado(a).",
-      "Eu falo comigo mesmo(a) como falaria com alguém que amo.",
-      "Eu consigo reconhecer que sofrer faz parte de ser humano.",
-      "Eu me permito descansar sem culpa excessiva.",
-      "Eu consigo ser firme comigo sem ser cruel.",
-      "Eu noto quando meu crítico interno aparece e consigo ajustar o tom.",
-      "Eu consigo me perdoar por escolhas do passado."
-    ]},
-    { key:"d5", items:[
-      "Eu consigo me acalmar depois de situações estressantes.",
-      "Eu não fico preso(a) por muito tempo em pensamentos autodepreciativos.",
-      "Eu consigo pedir ajuda quando preciso.",
-      "Eu me recupero relativamente bem após críticas ou conflitos.",
-      "Eu consigo tolerar frustração sem me desorganizar totalmente.",
-      "Eu consigo manter esperança mesmo em fases difíceis.",
-      "Eu reconheço minhas emoções sem ser dominado(a) por elas.",
-      "Eu aprendo com dificuldades ao invés de me definir por elas."
-    ]}
-  ];
+/* =========================
+   CONFIG
+   ========================= */
+const MIN_HEALTHY_PCT = 70; // mínimo saudável por tema/módulo (ajuste aqui)
+const MAILTO_TO = "impulsoflow@gmail.com";
 
-  const LIKERT = [
-    {v:1, label:"Discordo totalmente"},
-    {v:2, label:"Discordo"},
-    {v:3, label:"Neutro"},
-    {v:4, label:"Concordo"},
-    {v:5, label:"Concordo totalmente"}
-  ];
+/* =========================
+   DIMENSÕES / MÓDULOS
+   ========================= */
+const DIMENSIONS = [
+  { key:"d1", name:"Autovalorização e Autoaceitação", items:[
+    "Sinto que sou uma pessoa de valor, pelo menos tanto quanto outras pessoas.",
+    "Consigo reconhecer qualidades em mim, mesmo quando erro.",
+    "Aceito que tenho limitações sem me diminuir por isso.",
+    "Consigo me tratar com respeito, mesmo em dias difíceis.",
+    "Eu me sinto digno(a) de amor e consideração.",
+    "Eu me reconheço como alguém importante para mim mesmo(a).",
+    "Eu me permito ser humano(a), sem me exigir perfeição.",
+    "Eu consigo separar meu valor pessoal dos meus resultados."
+  ]},
+  { key:"d2", name:"Autoconfiança e Competência Percebida", items:[
+    "Eu confio que consigo aprender coisas novas quando necessário.",
+    "Eu me considero capaz de lidar com problemas do dia a dia.",
+    "Quando falho, consigo tentar de novo sem desistir de mim.",
+    "Eu me sinto competente naquilo que faço na maior parte do tempo.",
+    "Eu tomo decisões com razoável segurança.",
+    "Eu reconheço minhas conquistas sem minimizá-las.",
+    "Eu consigo me posicionar quando preciso.",
+    "Eu sinto que tenho recursos internos para enfrentar desafios."
+  ]},
+  { key:"d3", name:"Autoimagem e Aceitação Social", items:[
+    "Eu me sinto confortável em ser quem eu sou perto de outras pessoas.",
+    "Eu não me comparo o tempo todo de forma que me faça mal.",
+    "Eu consigo receber elogios sem desconfiar ou rejeitar.",
+    "Eu me sinto pertencente em ambientes sociais importantes para mim.",
+    "Eu consigo dizer “não” sem medo excessivo de rejeição.",
+    "Eu não baseio meu valor apenas na opinião dos outros.",
+    "Eu me sinto relativamente seguro(a) com minha imagem.",
+    "Eu consigo estar em grupo sem me sentir inferior."
+  ]},
+  { key:"d4", name:"Autocompaixão e Diálogo Interno", items:[
+    "Quando erro, eu evito me chamar de nomes ou me humilhar.",
+    "Eu consigo me acolher quando estou triste ou frustrado(a).",
+    "Eu falo comigo mesmo(a) como falaria com alguém que amo.",
+    "Eu consigo reconhecer que sofrer faz parte de ser humano.",
+    "Eu me permito descansar sem culpa excessiva.",
+    "Eu consigo ser firme comigo sem ser cruel.",
+    "Eu noto quando meu crítico interno aparece e consigo ajustar o tom.",
+    "Eu consigo me perdoar por escolhas do passado."
+  ]},
+  { key:"d5", name:"Estabilidade Emocional e Resiliência", items:[
+    "Eu consigo me acalmar depois de situações estressantes.",
+    "Eu não fico preso(a) por muito tempo em pensamentos autodepreciativos.",
+    "Eu consigo pedir ajuda quando preciso.",
+    "Eu me recupero relativamente bem após críticas ou conflitos.",
+    "Eu consigo tolerar frustração sem me desorganizar totalmente.",
+    "Eu consigo manter esperança mesmo em fases difíceis.",
+    "Eu reconheço minhas emoções sem ser dominado(a) por elas.",
+    "Eu aprendo com dificuldades ao invés de me definir por elas."
+  ]}
+];
 
-  // Monta lista de perguntas (misturadas) mantendo referência da dimensão
-  function buildQuestionsShuffled(){
-    const arr = [];
-    DIMENSIONS.forEach((d, di) => {
-      d.items.forEach((text, qi) => arr.push({ di, qi, text }));
-    });
+const LIKERT = [
+  {v:1, label:"Discordo totalmente"},
+  {v:2, label:"Discordo"},
+  {v:3, label:"Neutro"},
+  {v:4, label:"Concordo"},
+  {v:5, label:"Concordo totalmente"}
+];
 
-    // Fisher-Yates shuffle
-    for (let i = arr.length - 1; i > 0; i--){
-      const j = Math.floor(Math.random() * (i + 1));
-      [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    return arr;
+/* =========================
+   QUESTIONÁRIO (embaralhado)
+   ========================= */
+function buildQuestionsShuffled(){
+  const arr = [];
+  DIMENSIONS.forEach((d, di) => d.items.forEach((text, qi) => arr.push({ di, qi, text })));
+  for (let i = arr.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+/* =========================
+   ESTADO
+   ========================= */
+let user = { name:"", email:"" };
+let questions = [];
+let current = 0;
+let responses = []; // 40 respostas, ordem embaralhada
+let chartInstance = null;
+
+/* =========================
+   UTIL
+   ========================= */
+function sanitize(s){ return DOMPurify.sanitize(String(s || "")); }
+function validateEmail(email){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
+function pct(n){ return Math.max(0, Math.min(100, Math.round(n))); }
+function todayBR(){ return new Date().toLocaleDateString("pt-BR",{year:"numeric",month:"2-digit",day:"2-digit"}); }
+
+function score(){
+  const sums = DIMENSIONS.map(()=>0);
+  const maxPerDim = 8 * 5;
+
+  for(let i=0;i<questions.length;i++){
+    sums[questions[i].di] += responses[i];
   }
 
-  // Estado
-  let user = { name:"", email:"" };
-  let questions = [];
-  let current = 0;
-  let responses = []; // por índice da questão embaralhada: 1..5
+  const pctByDim = sums.map(s => (s / maxPerDim) * 100);
+  const iga = pctByDim.reduce((a,b)=>a+b,0) / pctByDim.length;
+  return { sums, pctByDim, iga };
+}
 
-  function sanitize(s){ return DOMPurify.sanitize(String(s || "")); }
-  function validateEmail(email){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
+function igaLevel(igaPct){
+  if(igaPct < 35) return "Muito baixo";
+  if(igaPct < 55) return "Baixo";
+  if(igaPct < 70) return "Moderado";
+  if(igaPct < 85) return "Bom";
+  return "Excelente";
+}
 
-  function startTest(){
-    const name = document.getElementById("name").value.trim();
-    const email = document.getElementById("email").value.trim();
+function igaProfile(igaPct){
+  if(igaPct < 35) return { title:"🔴 O Crítico Interno", text:"Indicador de autocrítica alta e base interna fragilizada. Priorize autocompaixão, apoio e reconstrução de valor pessoal." };
+  if(igaPct < 55) return { title:"🟠 O Comparador Inseguro", text:"Oscilações e sensibilidade à validação externa. O foco é construir consistência e autonomia emocional." };
+  if(igaPct < 70) return { title:"🟡 O Realista em Construção", text:"Há recursos internos, mas eles ficam instáveis sob pressão. Ajustes em hábitos e diálogo interno geram alta evolução." };
+  if(igaPct < 85) return { title:"🟢 O Confiante Equilibrado", text:"Boa base interna e recuperação emocional. Reforce rotina e limites para manter estabilidade em fases difíceis." };
+  return { title:"🟣 O Autolíder", text:"Autoestima estável, autorregulação e clareza de valor. O próximo nível é consistência e influência positiva em relações/liderança." };
+}
 
-    if(!name || !email || !validateEmail(email)){
-      alert("Preencha Nome e Email corretamente.");
-      return;
-    }
+function bandExplain(p){
+  if(p < 35) return "Faixa crítica: tendência a autodepreciação, vergonha e evitação. Pode exigir apoio estruturado.";
+  if(p < 55) return "Faixa de risco: autoestima instável, vulnerável a críticas/comparação. O objetivo é estabilizar base interna.";
+  if(p < 70) return "Faixa intermediária: você tem ferramentas, mas não estão consistentes. Trabalhar hábitos e crenças-chave melhora rápido.";
+  if(p < 85) return "Faixa saudável: bons recursos e estabilidade. O foco é refinar e manter o padrão sob estresse.";
+  return "Faixa ótima: padrão interno sólido, boa autogestão e autorrespeito consistente.";
+}
 
-    user = { name, email };
-    questions = buildQuestionsShuffled();
-    responses = new Array(questions.length).fill(null);
-    current = 0;
+/* =========================
+   UI: início / questões
+   ========================= */
+function startTest(){
+  const name = document.getElementById("name").value.trim();
+  const email = document.getElementById("email").value.trim();
 
-    document.getElementById("intro").classList.add("hidden");
-    document.getElementById("test").classList.remove("hidden");
-    renderQuestion();
+  if(!name || !email || !validateEmail(email)){
+    alert("Preencha Nome e Email corretamente.");
+    return;
   }
 
-  function renderQuestion(){
-    const total = questions.length;
-    const qNum = current + 1;
-    const progress = Math.round(((qNum - 1) / total) * 100);
+  user = { name, email };
+  questions = buildQuestionsShuffled();
+  responses = new Array(questions.length).fill(null);
+  current = 0;
 
-    const q = questions[current];
+  document.getElementById("intro").classList.add("hidden");
+  document.getElementById("test").classList.remove("hidden");
+  renderQuestion();
+}
 
-    const html = `
-      <div class="bg-white/70 border border-emerald-100 rounded-xl p-4">
-        <div class="mb-3">
-          <div class="flex items-center justify-between gap-2">
-            <p class="text-xs font-extrabold text-gray-600">Progresso</p>
-            <p class="text-xs font-extrabold text-gray-600">${qNum}/${total}</p>
+function renderQuestion(){
+  const total = questions.length;
+  const qNum = current + 1;
+  const progress = Math.round(((qNum - 1) / total) * 100);
+  const q = questions[current];
+
+  const html = `
+    <div class="bg-white/70 border border-emerald-100 rounded-xl p-4">
+      <div class="mb-3">
+        <div class="flex items-center justify-between gap-2">
+          <p class="text-xs font-extrabold text-gray-600">Progresso</p>
+          <p class="text-xs font-extrabold text-gray-600">${qNum}/${total}</p>
+        </div>
+        <div class="progress-rail mt-2">
+          <div class="progress-fill" style="width:${progress}%"></div>
+        </div>
+      </div>
+
+      <p class="text-xl md:text-2xl font-normal text-center text-gray-900 leading-snug">
+        "${sanitize(q.text)}"
+      </p>
+
+      <div class="grid grid-cols-5 gap-2 mt-5">
+        ${LIKERT.map(opt => `
+          <div class="scale-option ${responses[current]===opt.v?'selected':''}" onclick="selectAnswer(${opt.v})">
+            ${opt.v}<br><small class="text-[10px] font-semibold">${sanitize(opt.label)}</small>
           </div>
-          <div class="progress-rail mt-2">
-            <div class="progress-fill" style="width:${progress}%"></div>
+        `).join("")}
+      </div>
+
+      <div class="flex flex-col md:flex-row items-center justify-center gap-2 mt-5">
+        <button onclick="prev()" class="px-5 py-2.5 rounded-xl font-extrabold border border-gray-200 bg-white text-gray-700 ${current===0?'opacity-40 cursor-not-allowed':''}" ${current===0?'disabled':''}>
+          Anterior
+        </button>
+
+        ${current < total-1
+          ? `<button onclick="next()" class="btn-primary text-emerald-950 px-6 py-2.5 rounded-xl shadow-sm font-extrabold ${responses[current]===null?'opacity-50 cursor-not-allowed':''}">
+              Próxima
+            </button>`
+          : `<button onclick="finish()" class="btn-primary text-emerald-950 px-6 py-2.5 rounded-xl shadow-sm font-extrabold ${responses[current]===null?'opacity-50 cursor-not-allowed':''}">
+              Ver resultado
+            </button>`
+        }
+      </div>
+    </div>
+  `;
+  document.getElementById("questionHost").innerHTML = html;
+}
+
+function selectAnswer(v){ responses[current] = v; renderQuestion(); }
+
+function next(){
+  if(responses[current] === null){ alert("Selecione uma opção antes de continuar."); return; }
+  current++; renderQuestion();
+}
+
+function prev(){ if(current===0) return; current--; renderQuestion(); }
+
+/* =========================
+   RESULTADO + GRÁFICOS + ALERTAS
+   ========================= */
+function renderAlerts(pctByDim){
+  const low = pctByDim
+    .map((v,i)=>({v:Math.round(v), i}))
+    .filter(x=>x.v < MIN_HEALTHY_PCT);
+
+  const wrap = document.getElementById("alerts");
+  if(low.length === 0){
+    wrap.classList.add("hidden");
+    wrap.innerHTML = "";
+    return;
+  }
+
+  wrap.classList.remove("hidden");
+  wrap.className = "mt-4 space-y-2";
+
+  wrap.innerHTML = low.map(x => `
+    <div class="bg-amber-50 border border-amber-200 rounded-xl p-3">
+      <p class="text-sm font-extrabold text-amber-900">Alerta: abaixo do mínimo saudável</p>
+      <p class="text-xs text-amber-900 mt-1">
+        <span class="font-bold">${sanitize(DIMENSIONS[x.i].name)}</span> — ${x.v}% (mínimo saudável: ${MIN_HEALTHY_PCT}%).
+      </p>
+      <p class="text-xs text-amber-800 mt-1">
+        Interpretação: ${sanitize(bandExplain(x.v))}
+      </p>
+    </div>
+  `).join("");
+}
+
+function renderThemesChart(pctByDim){
+  document.getElementById("minHealthyLabel").textContent = `${MIN_HEALTHY_PCT}%`;
+
+  const labels = DIMENSIONS.map(d=>d.name);
+  const data = pctByDim.map(v=>Math.round(v));
+
+  const ctx = document.getElementById("themesChart").getContext("2d");
+  Chart.register(ChartDataLabels);
+
+  if(chartInstance){ chartInstance.destroy(); chartInstance = null; }
+
+  chartInstance = new Chart(ctx, {
+    type:"bar",
+    data:{
+      labels,
+      datasets:[
+        {
+          label:"% por módulo",
+          data,
+          backgroundColor: data.map(v => v < MIN_HEALTHY_PCT ? "rgba(245,158,11,0.55)" : "rgba(16,185,129,0.55)"),
+          borderColor: data.map(v => v < MIN_HEALTHY_PCT ? "rgba(217,119,6,1)" : "rgba(5,150,105,1)"),
+          borderWidth: 1,
+          borderRadius: 10,
+          borderSkipped: false
+        }
+      ]
+    },
+    options:{
+      indexAxis:"y",
+      responsive:true,
+      maintainAspectRatio:false,
+      scales:{
+        x:{
+          beginAtZero:true,
+          max:100,
+          ticks:{ stepSize:10, color:"#374151", font:{ size:11 } },
+          grid:{ color:"rgba(0,0,0,0.06)" }
+        },
+        y:{
+          ticks:{ color:"#111827", font:{ size:12, weight:"bold" } },
+          grid:{ display:false }
+        }
+      },
+      plugins:{
+        legend:{ display:false },
+        datalabels:{
+          anchor:"end",
+          align:"right",
+          formatter:(v)=> `${v}%`,
+          color:"#065f46",
+          font:{ weight:"bold", size:13 },
+          offset: 8
+        }
+      }
+    },
+    plugins: [{
+      id: "minHealthyLine",
+      afterDraw(chart){
+        const {ctx, chartArea, scales} = chart;
+        const x = scales.x.getPixelForValue(MIN_HEALTHY_PCT);
+        ctx.save();
+        ctx.strokeStyle = "rgba(245,158,11,0.95)";
+        ctx.lineWidth = 2;
+        ctx.setLineDash([6,6]);
+        ctx.beginPath();
+        ctx.moveTo(x, chartArea.top);
+        ctx.lineTo(x, chartArea.bottom);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = "rgba(180,83,9,1)";
+        ctx.font = "bold 11px Inter, Arial";
+        ctx.fillText(`mín. saudável ${MIN_HEALTHY_PCT}%`, x + 6, chartArea.top + 14);
+        ctx.restore();
+      }
+    }]
+  });
+}
+
+function moduleDetailHTML(pctByDim){
+  return pctByDim.map((p, i) => {
+    const v = Math.round(p);
+    const status = v < MIN_HEALTHY_PCT ? "Atenção" : "OK";
+    const badgeClass = v < MIN_HEALTHY_PCT ? "bg-amber-100 text-amber-900 border-amber-200" : "bg-emerald-100 text-emerald-900 border-emerald-200";
+    return `
+      <div class="border border-gray-100 rounded-xl p-3 bg-gray-50">
+        <div class="flex items-start justify-between gap-2">
+          <div>
+            <p class="text-sm font-extrabold text-gray-900">${sanitize(DIMENSIONS[i].name)}</p>
+            <p class="text-xs text-gray-700 mt-1">${sanitize(bandExplain(v))}</p>
+          </div>
+          <div class="shrink-0">
+            <span class="text-xs font-extrabold px-2 py-1 rounded-full border ${badgeClass}">${status} • ${v}%</span>
           </div>
         </div>
-
-        <p class="text-2xl md:text-3xl font-extrabold text-center text-gray-900 leading-snug">
-          "${sanitize(q.text)}"
-        </p>
-
-        <div class="grid grid-cols-5 gap-2 mt-5">
-          ${LIKERT.map(opt => `
-            <div class="scale-option ${responses[current]===opt.v?'selected':''}" data-value="${opt.v}" onclick="selectAnswer(${opt.v})">
-              ${opt.v}<br><small class="text-[10px] font-semibold">${sanitize(opt.label)}</small>
-            </div>
-          `).join("")}
-        </div>
-
-        <div class="flex flex-col md:flex-row items-center justify-center gap-2 mt-5">
-          <button onclick="prev()" class="px-5 py-2.5 rounded-xl font-extrabold border border-gray-200 bg-white text-gray-700 ${current===0?'opacity-40 cursor-not-allowed':''}" ${current===0?'disabled':''}>
-            Anterior
-          </button>
-
-          ${current < total-1
-            ? `<button onclick="next()" class="btn-primary text-emerald-950 px-6 py-2.5 rounded-xl shadow-sm font-extrabold ${responses[current]===null?'opacity-50 cursor-not-allowed':''}">
-                Próxima
-              </button>`
-            : `<button onclick="finish()" class="btn-primary text-emerald-950 px-6 py-2.5 rounded-xl shadow-sm font-extrabold ${responses[current]===null?'opacity-50 cursor-not-allowed':''}">
-                Ver resultado
-              </button>`
-          }
+        <div class="mt-2 text-xs text-gray-700">
+          <p class="font-bold">Leitura prática:</p>
+          <ul class="list-disc list-inside mt-1 space-y-1">
+            <li>${sanitize(practicalLine(i, v, 1))}</li>
+            <li>${sanitize(practicalLine(i, v, 2))}</li>
+            <li>${sanitize(practicalLine(i, v, 3))}</li>
+          </ul>
         </div>
       </div>
     `;
+  }).join("");
+}
 
-    document.getElementById("questionHost").innerHTML = html;
+function practicalLine(dimIndex, v, n){
+  const name = DIMENSIONS[dimIndex].name;
+  const low = v < MIN_HEALTHY_PCT;
+  const mid = v >= MIN_HEALTHY_PCT && v < 85;
+  if(low){
+    const tips = [
+      `Priorize 1 hábito simples por dia para ${name.toLowerCase()} (consistência antes de intensidade).`,
+      `Reduza gatilhos de autocrítica e adicione um “ritual de reparo” após erro (ex.: pausa, respiração, reframe).`,
+      `Busque apoio: conversa orientada + plano semanal de ações pequenas (5–15 min).`
+    ];
+    return tips[n-1];
   }
-
-  function selectAnswer(v){
-    responses[current] = v;
-    renderQuestion();
+  if(mid){
+    const tips = [
+      `Você já tem base; seu ganho está em consistência sob pressão.`,
+      `Escolha 1 situação recorrente e treine uma resposta nova (script de diálogo interno/limites/posicionamento).`,
+      `Meça evolução: 1 nota semanal (0–10) para perceber tendência e não só “o dia”.`
+    ];
+    return tips[n-1];
   }
+  const tips = [
+    `Este é um ponto forte. Proteja sua rotina e seus limites para manter estabilidade.`,
+    `Use esse módulo como “âncora” para elevar os demais (o que funciona aqui pode ser replicado).`,
+    `Ensinar/compartilhar o que você faz bem consolida o padrão interno.`
+  ];
+  return tips[n-1];
+}
 
-  function next(){
-    if(responses[current] === null){
-      alert("Selecione uma opção antes de continuar.");
-      return;
-    }
-    current++;
-    renderQuestion();
-  }
+/* =========================
+   AÇÕES AUTOMÁTICAS: PDF + HTML + MAILTO
+   ========================= */
+function buildMailtoBody(data){
+  const lines = [];
+  lines.push("Resultado — Avaliação Nível de Autoestima");
+  lines.push(`Data: ${todayBR()}`);
+  lines.push(`Nome: ${data.user.name}`);
+  lines.push(`Email: ${data.user.email}`);
+  lines.push("");
+  lines.push(`IGA: ${data.igaPct}%`);
+  lines.push(`Nível: ${data.level}`);
+  lines.push(`Perfil: ${data.profile.title}`);
+  lines.push(`Interpretação: ${data.profile.text}`);
+  lines.push("");
+  lines.push("Módulos (%):");
+  data.pctByDim.forEach((v,i)=> lines.push(`- ${DIMENSIONS[i].name}: ${Math.round(v)}%`));
+  lines.push("");
+  lines.push(`Mínimo saudável por módulo: ${MIN_HEALTHY_PCT}%`);
+  lines.push("");
+  lines.push("Observação: o PDF e o HTML do resultado foram gerados para download no dispositivo do participante.");
+  return lines.join("\n");
+}
 
-  function prev(){
-    if(current===0) return;
-    current--;
-    renderQuestion();
-  }
+function openMailto(data){
+  const subject = encodeURIComponent(`Resultado Autoestima — ${data.user.name}`);
+  const body = encodeURIComponent(buildMailtoBody(data));
+  window.location.href = `mailto:${MAILTO_TO}?subject=${subject}&body=${body}`;
+}
 
-  function pct(n){ return Math.max(0, Math.min(100, Math.round(n))); }
+async function autoGenerateFilesAndEmail(){
+  const hint = document.getElementById("autoActionsHint");
+  hint.textContent = "Ações automáticas: gerando PDF + HTML e abrindo e-mail…";
 
-  function score(){
-    // soma por dimensão a partir das questões embaralhadas
-    const sums = DIMENSIONS.map(()=>0);
-    const maxPerDim = 8 * 5;
+  // PDF (dispara download)
+  await generatePDF(true);
 
-    for(let i=0;i<questions.length;i++){
-      const { di } = questions[i];
-      sums[di] += responses[i];
-    }
+  // HTML (dispara download)
+  saveOfflineHTML(true);
 
-    const pctByDim = sums.map(s => (s / maxPerDim) * 100);
-    const iga = pctByDim.reduce((a,b)=>a+b,0) / pctByDim.length;
+  // mailto
+  openMailto(window._igaData);
 
-    return { sums, pctByDim, iga };
-  }
+  hint.textContent = "Se o navegador bloquear downloads automáticos, clique em “Salvar PDF” e “Salvar HTML”. O e-mail foi aberto no seu aplicativo padrão.";
+}
 
-  function igaLevel(igaPct){
-    if(igaPct < 35) return "Muito baixo";
-    if(igaPct < 55) return "Baixo";
-    if(igaPct < 70) return "Moderado";
-    if(igaPct < 85) return "Bom";
-    return "Excelente";
-  }
+/* =========================
+   FINALIZAR
+   ========================= */
+async function finish(){
+  if(responses[current] === null){ alert("Selecione uma opção antes de continuar."); return; }
+  if(responses.some(r => r === null)){ alert("Responda todas as perguntas."); return; }
 
-  function igaProfile(igaPct){
-    if(igaPct < 35) return { title:"🔴 O Crítico Interno", text:"Alta autocrítica e base interna fragilizada. O foco é reduzir punição interna e construir autoaceitação." };
-    if(igaPct < 55) return { title:"🟠 O Comparador Inseguro", text:"Oscilações e sensibilidade à validação externa. O foco é consistência emocional e autoconfiança." };
-    if(igaPct < 70) return { title:"🟡 O Realista em Construção", text:"Recursos presentes, mas inconsistentes sob pressão. Ajustes no diálogo interno ajudam muito." };
-    if(igaPct < 85) return { title:"🟢 O Confiante Equilibrado", text:"Boa base interna e recuperação emocional. Refinar pontos específicos eleva o resultado." };
-    return { title:"🟣 O Autolíder", text:"Autoestima estável e autoliderança. Manter consistência e usar isso em relações e liderança." };
-  }
+  const s = score();
+  const igaPct = pct(s.iga);
+  const level = igaLevel(igaPct);
+  const profile = igaProfile(igaPct);
 
-  function finish(){
-    if(responses[current] === null){
-      alert("Selecione uma opção antes de continuar.");
-      return;
-    }
-    if(responses.some(r => r === null)){
-      alert("Responda todas as perguntas.");
-      return;
-    }
+  document.getElementById("test").classList.add("hidden");
+  document.getElementById("result").classList.remove("hidden");
 
-    const s = score();
-    const igaPct = pct(s.iga);
-    const level = igaLevel(igaPct);
-    const profile = igaProfile(igaPct);
+  document.getElementById("personalData").innerHTML =
+    `<span class="font-bold">Nome:</span> ${sanitize(user.name)} | <span class="font-bold">Email:</span> ${sanitize(user.email)}`;
 
-    document.getElementById("test").classList.add("hidden");
-    document.getElementById("result").classList.remove("hidden");
+  document.getElementById("igaPct").textContent = `${igaPct}%`;
+  document.getElementById("igaLevel").textContent = `Nível: ${level}`;
+  document.getElementById("profileTitle").textContent = profile.title;
+  document.getElementById("profileText").textContent = profile.text;
 
-    document.getElementById("personalData").innerHTML =
-      `<span class="font-bold">Nome:</span> ${sanitize(user.name)} | <span class="font-bold">Email:</span> ${sanitize(user.email)}`;
+  window._igaData = { user, igaPct, level, profile, pctByDim: s.pctByDim };
 
-    document.getElementById("igaPct").textContent = `${igaPct}%`;
-    document.getElementById("igaLevel").textContent = `Nível: ${level}`;
-    document.getElementById("profileTitle").textContent = profile.title;
-    document.getElementById("profileText").textContent = profile.text;
+  renderAlerts(s.pctByDim);
+  renderThemesChart(s.pctByDim);
+  document.getElementById("moduleExplain").innerHTML = moduleDetailHTML(s.pctByDim);
 
-    window._igaData = { user, igaPct, level, profile, pctByDim: s.pctByDim };
-  }
+  // ações automáticas solicitadas
+  setTimeout(() => { autoGenerateFilesAndEmail(); }, 400);
+}
 
-  async function generatePDF(){
-    try{
-      const data = window._igaData;
-      if(!data){ alert("Gere o resultado antes de salvar PDF."); return; }
-
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF({ format:"a4" });
-
-      doc.setFillColor(240, 253, 244);
-      doc.rect(0,0,210,297,"F");
-
-      doc.setFont("helvetica","bold");
-      doc.setFontSize(18);
-      doc.setTextColor(20,83,45);
-      doc.text("Avaliação de Autoestima Saudável (IGA)", 105, 18, { align:"center" });
-
-      doc.setFont("helvetica","normal");
-      doc.setFontSize(10);
-      doc.setTextColor(31,41,55);
-
-      const header = `Nome: ${data.user.name} | Email: ${data.user.email} | Data: ${new Date().toLocaleDateString("pt-BR")}`;
-      doc.text(doc.splitTextToSize(header, 180), 15, 30);
-
-      doc.setFont("helvetica","bold");
-      doc.setFontSize(14);
-      doc.text(`IGA: ${data.igaPct}% — ${data.level}`, 15, 46);
-
-      doc.setFont("helvetica","bold");
-      doc.setFontSize(12);
-      doc.text(`Perfil: ${data.profile.title}`, 15, 56);
-
-      doc.setFont("helvetica","normal");
-      doc.setFontSize(10);
-      doc.text(doc.splitTextToSize(`Interpretação: ${data.profile.text}`, 180), 15, 64);
-
-      const pdfName = `Autoestima_IGA_${sanitize(data.user.name).replace(/\s+/g,"_")}.pdf`;
-      doc.save(pdfName);
-    }catch(e){
-      console.error(e);
-      alert("Erro ao gerar PDF.");
-    }
-  }
-
-  function saveOfflineHTML(){
+/* =========================
+   PDF / HTML
+   ========================= */
+async function generatePDF(silent=false){
+  try{
     const data = window._igaData;
-    if(!data){ alert("Gere o resultado antes de salvar HTML."); return; }
+    if(!data){ if(!silent) alert("Gere o resultado antes de salvar PDF."); return; }
 
-    const resultClone = document.querySelector("#result").cloneNode(true);
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ format:"a4" });
 
-    const styleContent = `
-      <style>
-        body{ font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial; background:#fff; margin:0; padding:20px; }
-        .container{ max-width: 920px; margin:0 auto; }
-      </style>
-      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
-    `;
+    doc.setFillColor(246, 253, 248);
+    doc.rect(0,0,210,297,"F");
 
-    const htmlContent = `
-      <!DOCTYPE html>
-      <html lang="pt-BR">
-      <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Resultado IGA — ${sanitize(data.user.name)}</title>
-        ${styleContent}
-      </head>
-      <body>
-        <div class="container">
-          ${resultClone.outerHTML}
-        </div>
-      </body>
-      </html>
-    `;
+    doc.setFont("helvetica","bold");
+    doc.setFontSize(18);
+    doc.setTextColor(20,83,45);
+    doc.text("Avaliação Nível de Autoestima", 105, 18, { align:"center" });
 
-    const blob = new Blob([htmlContent], { type:"text/html;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
+    doc.setFont("helvetica","normal");
+    doc.setFontSize(10);
+    doc.setTextColor(31,41,55);
 
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `Resultado_IGA_${sanitize(data.user.name).replace(/\s+/g,"_")}.html`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    const header = `Nome: ${data.user.name} | Email: ${data.user.email} | Data: ${todayBR()}`;
+    doc.text(doc.splitTextToSize(header, 180), 15, 30);
 
-    URL.revokeObjectURL(url);
+    doc.setFont("helvetica","bold");
+    doc.setFontSize(14);
+    doc.text(`IGA: ${data.igaPct}% — ${data.level}`, 15, 46);
+
+    doc.setFont("helvetica","bold");
+    doc.setFontSize(12);
+    doc.text(`Perfil: ${data.profile.title}`, 15, 56);
+
+    doc.setFont("helvetica","normal");
+    doc.setFontSize(10);
+    doc.text(doc.splitTextToSize(`Interpretação: ${data.profile.text}`, 180), 15, 64);
+
+    // Captura gráfico por temas
+    const chartCanvas = document.getElementById("themesChart");
+    if(chartCanvas){
+      const shot = await html2canvas(chartCanvas, { scale: 3, backgroundColor: "#ffffff" });
+      const img = shot.toDataURL("image/png", 1.0);
+      doc.addImage(img, "PNG", 15, 92, 180, 90);
+    }
+
+    // Página 2: detalhes por módulos
+    doc.addPage();
+    doc.setFillColor(246, 253, 248);
+    doc.rect(0,0,210,297,"F");
+
+    doc.setFont("helvetica","bold");
+    doc.setFontSize(14);
+    doc.setTextColor(20,83,45);
+    doc.text("Detalhamento por módulos", 105, 18, { align:"center" });
+
+    doc.setFont("helvetica","normal");
+    doc.setFontSize(10);
+    doc.setTextColor(31,41,55);
+
+    let y = 30;
+    data.pctByDim.forEach((v,i)=>{
+      const line = `${DIMENSIONS[i].name}: ${Math.round(v)}% (${Math.round(v) < MIN_HEALTHY_PCT ? "ABAIXO do mínimo saudável" : "OK"})`;
+      doc.text(doc.splitTextToSize(line, 180), 15, y);
+      y += 7;
+      const expl = bandExplain(Math.round(v));
+      doc.text(doc.splitTextToSize("Interpretação: " + expl, 180), 15, y);
+      y += 12;
+      if(y > 270){ doc.addPage(); y = 20; }
+    });
+
+    const pdfName = `Autoestima_${sanitize(data.user.name).replace(/\s+/g,"_")}.pdf`;
+    doc.save(pdfName);
+  }catch(e){
+    console.error(e);
+    if(!silent) alert("Erro ao gerar PDF.");
+  }
+}
+
+function saveOfflineHTML(silent=false){
+  const data = window._igaData;
+  if(!data){ if(!silent) alert("Gere o resultado antes de salvar HTML."); return; }
+
+  // Substituir canvas por imagem para offline
+  const chartCanvas = document.getElementById("themesChart");
+  let chartImgData = "";
+  if(chartCanvas) chartImgData = chartCanvas.toDataURL("image/png", 1.0);
+
+  const resultClone = document.querySelector("#result").cloneNode(true);
+  const oldCanvas = resultClone.querySelector("#themesChart");
+  if(oldCanvas && chartImgData){
+    const img = document.createElement("img");
+    img.src = chartImgData;
+    img.alt = "Gráfico por módulos";
+    img.style.width = "100%";
+    img.style.maxWidth = "920px";
+    img.style.height = "auto";
+    img.style.display = "block";
+    img.style.margin = "0 auto";
+    oldCanvas.parentNode.replaceChild(img, oldCanvas);
   }
 
-  function restart(){
-    questions = [];
-    responses = [];
-    current = 0;
-    window._igaData = null;
+  // Remover botões de ação no arquivo offline (opcional: mantém, mas aqui eu removo pra ficar limpo)
+  const btns = resultClone.querySelectorAll("button");
+  btns.forEach(b => b.remove());
 
-    document.getElementById("result").classList.add("hidden");
-    document.getElementById("test").classList.add("hidden");
-    document.getElementById("intro").classList.remove("hidden");
+  const styleContent = `
+    <style>
+      body{ font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial; background:#fff; margin:0; padding:20px; }
+      .container{ max-width: 920px; margin:0 auto; }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+  `;
 
-    document.getElementById("name").value = "";
-    document.getElementById("email").value = "";
-  }
+  const htmlContent = `
+    <!DOCTYPE html>
+    <html lang="pt-BR">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Resultado Autoestima — ${sanitize(data.user.name)}</title>
+      ${styleContent}
+    </head>
+    <body>
+      <div class="container">
+        ${resultClone.outerHTML}
+      </div>
+    </body>
+    </html>
+  `;
+
+  const blob = new Blob([htmlContent], { type:"text/html;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `Resultado_Autoestima_${sanitize(data.user.name).replace(/\s+/g,"_")}.html`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+
+  URL.revokeObjectURL(url);
+}
+
+function restart(){
+  questions = [];
+  responses = [];
+  current = 0;
+  window._igaData = null;
+
+  if(chartInstance){ chartInstance.destroy(); chartInstance = null; }
+
+  document.getElementById("alerts").classList.add("hidden");
+  document.getElementById("alerts").innerHTML = "";
+  document.getElementById("moduleExplain").innerHTML = "";
+
+  document.getElementById("result").classList.add("hidden");
+  document.getElementById("test").classList.add("hidden");
+  document.getElementById("intro").classList.remove("hidden");
+
+  document.getElementById("name").value = "";
+  document.getElementById("email").value = "";
+}
 </script>
 </body>
 </html>
